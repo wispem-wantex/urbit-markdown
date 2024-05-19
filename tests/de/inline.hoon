@@ -69,6 +69,13 @@
       %+  expect-eq
         !>(`strong:inline:m`[%strong '_' ~[[%text 'the Github spec']]])
         !>((scan "__the Github spec__" strong:inline:de:md))
+      :: With nested emphasis
+      %+  expect-eq
+        !>  ^-  strong:inline:m   :+  %strong  '*'  :~  [%text 'the ']
+                                                        [%emphasis '*' ~[[%text 'Github']]]
+                                                        [%text ' spec']
+                                                    ==
+        !>((scan "**the *Github* spec**" strong:inline:de:md))
     ==
   ::
   ++  test-inline-code-block

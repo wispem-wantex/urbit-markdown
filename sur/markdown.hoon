@@ -29,15 +29,10 @@
     --
 ::
 |%
-  ::::
-  ::::  Markdown document or fragment: a list of nodes
-  ::+$  markdown  (list node)
-  ::::
-  ::::  Node: either a container or leaf node
-  ::+$  node
-  ::  $%  [%leaf leaf-node]
-  ::      ::[%container container-node]
-  ::  ==
+  ::
+  ::  Markdown document or fragment: a list of nodes
+  +$  markdown  (list node:leaf)
+  ::
   ++  inline
     |%
       ::  A single inline element
@@ -62,10 +57,10 @@
       +$  code      [%code-span num-backticks=@ text=@t]
       ::
       ::  Line break
-      +$  break     [%line-break]
+      +$  break     [%line-break ~]
       ::
       ::  Soft line break: a newline in the source code, will be rendered as a single space
-      +$  softbrk   [%soft-line-break]
+      +$  softbrk   [%soft-line-break ~]
       ::
       ::  Text: Just text
       +$  text      [%text text=@t]
@@ -90,49 +85,37 @@
     --
   ::
   ::  Leaf nodes: non-nested (i.e., terminal) nodes
-  ::+$  leaf-node
-  ::  $%  ::
-  ::      ::  Heading, either setext or ATX style
-  ::      $:  %heading
-  ::          style=$?(%setext %atx)
-  ::          level=@
-  ::          =contents
-  ::      ==
-  ::      ::
-  ::      ::  Line break (horizontal line)
-  ::      $:  %break
-  ::          indent-level=@  :: No more than 3
-  ::          char=@t         :: either tic (`) or sig (~)
-  ::          char-count=@    :: At least 3
-  ::      ==
-  ::      ::
-  ::      ::  Code blocks, either indentation-based or fenced.
-  ::      $:  %code-block
-  ::          block-style=$%([%indented] [%fenced fence-char=@t fence-length=@ info-string=@t])
-  ::          indent-level=@  :: No less than 4
-  ::          blocks=(list @t)
-  ::      ==
-  ::      ::
-  ::      ::  HTML
-  ::      $:  %html
-  ::          text=@t
-  ::      ==
-  ::      ::
-  ::      ::  Link reference definition (defines a named link which can be referenced elsewhere)
-  ::      $:  %link-ref-definition
-  ::          label=@t
-  ::          url=url
-  ::      ==
-  ::      ::
-  ::      ::  Paragraph
-  ::      $:  %paragraph
-  ::          =contents
-  ::      ==
-  ::      ::
-  ::      ::  Blank lines (not rendered, but lets user control aethetic layout of the source code)
-  ::      $:  %blank-line
-  ::      ==
-  ::  ==
+  ++  leaf
+    |%
+      ++  node  $@  ~
+                $%(heading break codeblk-indent codeblk-fenced html link-ref-def paragraph blank-line)
+      ::
+      ::  Heading, either setext or ATX style
+      +$  heading         [%heading style=?(%setext %atx) level=@ =contents:inline]
+      ::
+      ::  Thematic break (horizontal line)
+      ::  Consists of at least 3 repetitions of either hep '-', cab '_', or tar '*'
+      +$  break           [%break char=@t char-count=@]
+      ::
+      ::  Indentation-based code block: indented 4+ spaces.  Can include newlines and blank lines.
+      +$  codeblk-indent  [%indent-codeblock indent-level=@ text=@t]
+      ::
+      ::  Fenced code block: begins and ends with 3+ repetitions of tic (`) or sig (~).
+      ::  Can be indented up to 3 spaces.
+      +$  codeblk-fenced  [%fenced-codeblock char=@t char-count=@ info-string=@t indent-level=@ text=@t]
+      ::
+      ::  HTML
+      +$  html            [%html text=@t]
+      ::
+      ::  Link reference definition (defines a named link which can be referenced elsewhere)
+      +$  link-ref-def    [%link-ref-definition label=@t =urlt:ln]
+      ::
+      ::  Paragraph
+      +$  paragraph       [%paragraph =contents:inline]
+      ::
+      ::  Blank lines (not rendered, but lets user control aethetic layout of the source code)
+      +$  blank-line      [%blank-line ~]
+    --
   ::
   ::  Container node: can contain other nodes (either container or leaf).
   ::+$  container-node

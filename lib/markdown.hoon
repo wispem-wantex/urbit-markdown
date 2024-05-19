@@ -32,6 +32,8 @@
           ++  escaped
             |=  [char=@t]
             (cold char (jest (crip (snoc "\\" char))))
+          ++  line-end                                     :: Either EOL or EOF
+            ;~(pose (just '\0a') (full (easy ~)))
           ::
           ++  ln                                           ::  Links and urls
             |%
@@ -130,6 +132,7 @@
                   code
                   link
                   text
+                  softbrk
                 ==
               ::
               ++  text
@@ -144,8 +147,8 @@
                   emphasis
                   strong
                   code
+                  softbrk
                   :: ...etc
-                  ::(fall extra-excludes fail)
                   prn
                 ==
               ::
@@ -158,6 +161,10 @@
                   (escaped '!')  (escaped '*')  (escaped '*')  (escaped '_')
                   :: etc
                 ==
+              ++  softbrk                                  :: Newline
+                %+  cook  |=(a=softbrk:inline:m a)
+                %+  stag  %soft-line-break
+                (cold ~ (just '\0a'))
               ::
               ++  link
                 %+  knee  *link:inline:m  |.  ~+   :: recurse
@@ -254,6 +261,7 @@
                       (easy '*')
                       %-  plus  ;~  pose                     :: Display text can contain various contents
                         escape
+                        emphasis
                         :: code
                         :: image
                         link
@@ -331,6 +339,105 @@
                     ==
                 --
             --
+          ::
+          ++  leaf
+            |%
+              ++  node
+                %+  cook  |=(a=node:leaf:m a)
+                ;~  pose
+                  blank-line
+                  heading
+                  break
+                  :: ...etc
+                  paragraph
+                ==
+              ++  blank-line
+                %+  cook  |=(a=blank-line:leaf:m a)
+                %+  stag  %blank-line
+                (cold ~ (just '\0a'))
+              ++  heading
+                =<  %+  cook  |=(a=heading:leaf:m a)
+                    %+  stag  %heading
+                    ;~(pose atx setext)
+                |%
+                  ++  atx
+                    =/  atx-eol   ;~  plug
+                                    (star ace)
+                                    (star hax)
+                                    (star ace)
+                                    line-end
+                                  ==
+
+                    %+  stag  %atx
+                    %+  cook                               :: Parse heading inline content
+                      |=  [level=@ text=tape]
+                      [level (scan text contents:inline)]
+                    ;~  pfix
+                      (stun [0 3] ace)                     :: Ignore up to 3 leading spaces
+                      ;~  plug
+                        (cook |=(a=tape (lent a)) (stun [1 6] hax))                   :: Heading level
+                        ::%+  cook
+                        ::  |=([a=tape] (scan text contents:inline))
+                        %+  ifix  [(plus ace) atx-eol]     :: One leading space is required; rest is ignored
+                          %-  star
+                          ;~(less atx-eol prn)             :: Trailing haxes/spaces are ignored
+                      ==
+                    ==
+                  ++  setext
+                    %+  stag  %setext
+                    %+  cook
+                      |=  [text=tape level=@]
+                      [level (scan text contents:inline)]
+                    ;~  plug                                   :: Wow this is a mess
+                      %+  ifix  [(stun [0 3] ace) (star ace)]  :: Strip up to 3 spaces, and trailing space
+                        (star ;~(less ;~(pfix (star ace) (just '\0a')) prn))     :: Any text...
+                      ;~  pfix
+                        (just '\0a')                         :: ...followed by newline...
+                        (stun [0 3] ace)                     :: ...up to 3 spaces (stripped)...
+                        ;~  sfix
+                          ;~  pose                             :: ...and an underline
+                            (cold 1 (plus (just '-')))         :: Underlined by '-' means heading lvl 1
+                            (cold 2 (plus (just '=')))         :: Underlined by '=' means heading lvl 2
+                          ==
+                          (star ace)
+                        ==
+                      ==
+                    ==
+                --
+              ++  break
+                %+  cook  |=(a=break:leaf:m a)
+                %+  stag  %break
+                %+  cook
+                  |=  [first-2=@t trailing=tape]
+                  [(head trailing) (add 2 (lent trailing))]
+                %+  ifix  :-  (stun [0 3] ace)                  :: Strip indent and trailing space
+                              ;~  plug
+                                (star (mask " \09"))
+                                (just '\0a')                    :: No other chars allowed on the line
+                              ==
+                  ;~  pose
+                    ;~(plug (jest '**') (plus tar))       :: At least 3, but can be more
+                    ;~(plug (jest '--') (plus hep))
+                    ;~(plug (jest '__') (plus cab))
+                  ==
+              ++  paragraph
+                %+  cook  |=(a=paragraph:leaf:m a)
+                %+  stag  %paragraph
+                %+  cook                                   :: Reparse the paragraph text as elements
+                  |=  [a=(list tape)]
+                  (scan (zing a) contents:inline)
+                %-  plus                                   :: Read lines until a non-paragraph object is found
+                  ;~  less
+                    heading
+                    break
+                    %+  cook  snoc  ;~  plug
+                      %-  plus  ;~(less (jest '\0a') prn)  :: Lines must be non-empty
+                      (cold '\0a' line-end)
+                    ==
+                  ==
+            --
+          ++  markdown
+            (star node:leaf)
         --
       ::
       ::  Enserialize (write out as text)
@@ -345,7 +452,6 @@
             %-  star  ;~  pose
               (cook |=(a=@t `tape`~['\\' a]) (mask chars))
               (cook trip prn)
-              ::(cold `tape`['\\' ] gal) (cold "\\>" gar) (cook trip prn))))
             ==
           ::
           ++  ln
@@ -407,6 +513,7 @@
                   %code-span  (code e)
                   %strong  (strong e)
                   %emphasis  (emphasis e)
+                  %soft-line-break  (softbrk e)
                   :: ...etc
                 ==
               ++  text
@@ -429,6 +536,10 @@
                 ^-  tape
                 (snoc "\\" char.e)                 :: Could use `escape-chars` but why bother-- this is shorter
               ::
+              ++  softbrk
+                |=  [s=softbrk:inline:m]
+                ^-  tape
+                "\0a"
               ++  code
                 |=  [c=code:inline:m]
                 ^-  tape
@@ -452,6 +563,48 @@
                   (trip emphasis-char.e)
                 ==
             --
+          ::
+          ++  leaf
+            |%
+              ++  node
+                |=  [n=node:leaf:m]
+                ?+  -.n  !!
+                  %blank-line  (blank-line n)
+                  %break  (break n)
+                  %heading  (heading n)
+                  %paragraph  (paragraph n)
+                  :: ...etc
+                ==
+
+              ++  blank-line
+                |=  [b=blank-line:leaf:m]
+                ^-  tape
+                "\0a"
+              ::
+              ++  break
+                |=  [b=break:leaf:m]
+                ^-  tape
+                (weld (reap char-count.b char.b) "\0a")
+              ::
+              ++  heading
+                |=  [h=heading:leaf:m]
+                ^-  tape
+                ?-  style.h
+                  %atx
+                    ;:(weld (reap level.h '#') " " (contents:inline contents.h) "\0a")
+                  %setext
+                    =/  line  (contents:inline contents.h)
+                    ;:(weld line "\0a" (reap (lent line) ?:(=(level.h 1) '-' '=')) "\0a")
+                ==
+              ++  paragraph
+                |=  [p=paragraph:leaf:m]
+                ^-  tape
+                (contents:inline contents.p)
+            --
+          ++  markdown
+            |=  [m=markdown:m]
+            ^-  tape
+            %-  zing  %+  turn  m  node:leaf
         --
     --
   ::
@@ -474,6 +627,7 @@
               %escape  (escape e)
               %strong  (strong e)
               %emphasis  (emphasis e)
+              %soft-line-break  (softbrk e)
               :: ...etc
             ==
           ++  text
@@ -484,6 +638,10 @@
             |=  [e=escape:inline:m]
             ^-  manx
             [[%$ [%$ (trip char.e)] ~] ~]  :: Magic; look up the structure of a `manx` if you want
+          ++  softbrk
+            |=  [s=softbrk:inline:m]
+            ^-  manx
+            (text [%text ' '])
           ++  code
             |=  [c=code:inline:m]
             ^-  manx
@@ -512,5 +670,53 @@
               ;*  (contents contents.s)
             ==
         --
+      ++  leaf
+        |_  [reference-links=(map @t urlt:ln:m)]
+          ++  node
+            |=  [n=node:leaf:m]
+            ^-  manx
+            ?+  -.n  !!
+              %blank-line  (blank-line n)
+              %break  (break n)
+              %heading  (heading n)
+              %paragraph  (paragraph n)
+              :: ...etc
+            ==
+          ++  heading
+            |=  [h=heading:leaf:m]
+            ^-  manx
+            :-
+              :_  ~   ?+  level.h  !!
+                        %1  %h1
+                        %2  %h2
+                        %3  %h3
+                        %4  %h4
+                        %5  %h5
+                        %6  %h6
+                      ==
+            (~(contents inline reference-links) contents.h)
+          ++  blank-line
+            |=  [b=blank-line:leaf:m]
+            ^-  manx
+            (text:inline [%text ' '])
+          ++  break
+            |=  [b=break:leaf:m]
+            ^-  manx
+            ;hr;
+          ++  paragraph
+            |=  [p=paragraph:leaf:m]
+            ^-  manx
+            ;p
+              ;*  (~(contents inline reference-links) contents.p)
+            ==
+        --
+      ++  markdown
+        |=  [m=markdown:m]
+        ^-  manx
+        ;html
+          ;body
+            ;*  %+  turn  m  node:leaf
+          ==
+        ==
     --
 --
