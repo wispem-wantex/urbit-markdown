@@ -50,6 +50,13 @@
         !>((codeblk-indent:leaf:en:md [%indent-codeblock 'an indented\0a  codeblock\0a']))
     ==
   ::
+  ++  test-link-ref-def
+    ;:  weld
+      %+  expect-eq
+        !>("[foo]: /url \"title\"\0a")
+        !>((link-ref-def:leaf:en:md [%link-ref-definition 'foo' [['/url' |] `'title']]))
+    ==
+  ::
   ++  test-paragraph
     ;:  weld
       %+  expect-eq

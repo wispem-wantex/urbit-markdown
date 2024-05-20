@@ -61,6 +61,17 @@
         !>((scan "    an indented\0a      codeblock" codeblk-indent:leaf:de:md))
     ==
   ::
+  ++  test-link-ref-def
+    ;:  weld
+      %+  expect-eq
+        !>(`link-ref-def:leaf:m`[%link-ref-definition 'foo' [['/url' |] `'title']])
+        !>((scan "[foo]: /url \"title\"" link-ref-def:leaf:de:md))
+      :: Url on a new line
+      %+  expect-eq
+        !>(`link-ref-def:leaf:m`[%link-ref-definition 'foo' [['/url' |] ~]])
+        !>((scan "[foo]:\0a/url" link-ref-def:leaf:de:md))
+    ==
+  ::
   ++  test-paragraph
     ;:  weld
       %+  expect-eq

@@ -97,7 +97,7 @@
                 %-  plus  ;~  pose                         :: Non-empty
                   (escaped '[')
                   (escaped ']')
-                  ;~(less sel ser prn)                     :: Anything except '<', '>'
+                  ;~(less sel ser prn)                     :: Anything except '[', ']' (must be escaped)
                 ==
               ::
               ++  target                                   :: Link target, either reference or direct
@@ -461,6 +461,20 @@
                     ==
                   ==
               ::
+              ++  link-ref-def
+                %+  cook  |=(a=link-ref-def:leaf:m a)
+                %+  stag  %link-ref-definition
+                %+  ifix  [(stun [0 3] ace) line-end]            :: Strip leading space
+                  ;~  plug
+                    ;~(sfix label:ln col)                 :: Label (enclosed in "[...]"), followed by col ":"
+                    ;~  pfix                                :: Optional whitespace, including up to 1 newline
+                      (star ace)
+                      (stun [0 1] (just '\0a'))
+                      (star ace)
+                      urlt:ln
+                    ==
+                  ==
+              ::
               ++  paragraph
                 %+  cook  |=(a=paragraph:leaf:m a)
                 %+  stag  %paragraph
@@ -635,6 +649,7 @@
                   %break  (break n)
                   %heading  (heading n)
                   %indent-codeblock  (codeblk-indent n)
+                  %link-ref-definition  (link-ref-def n)
                   %paragraph  (paragraph n)
                   :: ...etc
                 ==
@@ -669,6 +684,18 @@
                   ^-  tape
                   %-  zing  %+  turn  a  |=(t=tape (weld "    " t))
                 %-  plus  %+  cook  snoc  ;~(plug (star ;~(less (just '\0a') prn)) (just '\0a'))
+              ::
+              ++  link-ref-def
+                |=  [l=link-ref-def:leaf:m]
+                ^-  tape
+                ;:  weld
+                  "["
+                  (trip label.l)
+                  "]: "
+                  (urlt:ln urlt.l)
+                  "\0a"
+                ==
+
               ::
               ++  paragraph
                 |=  [p=paragraph:leaf:m]
@@ -770,6 +797,7 @@
               %heading  (heading n)
               %indent-codeblock  (codeblk-indent n)
               %paragraph  (paragraph n)
+              %link-ref-definition  (text:inline [%text ' '])  :: Link ref definitions don't render as anything
               :: ...etc
             ==
           ++  heading
