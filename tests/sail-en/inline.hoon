@@ -47,6 +47,16 @@
         !>((~(link inline:sail-en:md ref-links) [%link ~[[%text 'asdf']] [%ref %shortcut 'asdf']]))
     ==
   ::
+  ++  test-inline-image
+    ;:  weld
+      %+  expect-eq
+        !>  ^-  manx  ;img(href "url", alt "Alt Text");
+        !>((image:inline:sail-en:md [%image 'Alt Text' [%direct [['url' |] ~]]]))
+      %+  expect-eq
+        !>  ^-  manx  ;img(href "url", alt "Alt] ] Text");
+        !>((image:inline:sail-en:md [%image 'Alt] ] Text' [%direct [['url' |] ~]]]))
+    ==
+  ::
   ++  test-inline-emphasis
     ;:  weld
       %+  expect-eq

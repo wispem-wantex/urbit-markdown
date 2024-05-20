@@ -196,6 +196,19 @@
                   target:ln
                 ==
               ::
+              ++  image
+                %+  cook  |=(a=image:inline:m a)
+                %+  stag  %image
+                ;~  plug
+                  %+  ifix  [(jest '![') (just ']')]       :: alt-text is wrapped in '![...]'
+                    %+  cook  crip
+                    %-  star  ;~  pose
+                      (escaped ']')
+                      ;~(less ser prn)
+                    ==
+                  target:ln
+                ==
+              ::
               ++  emphasis
                 %+  knee  *emphasis:inline:m  |.  ~+   :: recurse
                 %+  cook  |=(a=emphasis:inline:m a)
@@ -531,6 +544,16 @@
                   (target:ln target.l)
                 ==
               ::
+              ++  image
+                |=  [i=image:inline:m]
+                ^-  tape
+                ;:  weld
+                  "!["
+                  (escape-chars alt-text.i "]")
+                  "]"
+                  (target:ln target.i)
+                ==
+              ::
               ++  escape
                 |=  [e=escape:inline:m]
                 ^-  tape
@@ -657,6 +680,15 @@
             ;a(href (trip text.url.urlt), title (trip (fall title-text.urlt '')))
               ;*  (contents contents.l)
             ==
+          ++  image
+            |=  [i=image:inline:m]
+            ^-  manx
+            =/  target  target.i
+            =/  urlt  ?-  -.target
+                          %direct  urlt.target                                 :: Direct link; use it
+                          %ref     (~(got by reference-links) label.target)    :: Ref link; look it up
+                      ==
+            ;img(href (trip text.url.urlt), alt (trip alt-text.i));
           ++  emphasis
             |=  [e=emphasis:inline:m]
             ^-  manx

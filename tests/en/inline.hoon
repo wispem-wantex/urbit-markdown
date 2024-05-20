@@ -39,6 +39,16 @@
         !>((link:inline:en:md [%link ~[[%text 'asdf']] [%ref %shortcut 'asdf']]))
     ==
   ::
+  ++  test-inline-image
+    ;:  weld
+      %+  expect-eq
+        !>("![Alt Text](url)")
+        !>((image:inline:en:md [%image 'Alt Text' [%direct [['url' |] ~]]]))
+      %+  expect-eq
+        !>("![Alt\\] \\] Text](url)")
+        !>((image:inline:en:md [%image 'Alt] ] Text' [%direct [['url' |] ~]]]))
+    ==
+  ::
   ++  test-inline-emphasis
     ;:  weld
       :: With '*'

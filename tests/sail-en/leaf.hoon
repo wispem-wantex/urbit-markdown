@@ -48,16 +48,6 @@
                                 [%soft-line-break ~]
                             ==
       ::
-      ::=/  a
-      ::  '''
-        ::Markdown per se is *informally specified*; different platforms support slightly different versions.
-        ::The most complete and widely adopted specification is [the Github spec](https://github.github.com/gfm),
-        ::**which includes several *non-standard* extensions of the Markdown format**, while streamlining / removing
-        ::the syntax in other areas. Our goal with this project is to support the Github "flavor" of Markdown,
-        ::because many of these extensions are really popular and have effectively become part of the de facto
-        ::standard.
-
-      ::  '''
       %+  expect-eq
         !>  "<p>Markdown per se is <em>informally specified</em>; different platforms support slightly different versions. The most complete and widely adopted specification is <a href=\"https://github.github.com/gfm\" title=\"\">the Github spec</a>, <strong>which includes several <em>non-standard</em> extensions of the Markdown format</strong>, while streamlining / removing the syntax in other areas. Our goal with this project is to support the Github &quot;flavor&quot; of Markdown, because many of these extensions are really popular and have effectively become part of the de facto standard. </p>"
         !>  %-  en-xml:html  %-  paragraph:leaf:sail-en:md
@@ -85,20 +75,6 @@
     ==
   ++  test-markdown
     ;:  weld
-      ::=/  a
-      ::  '''
-      ::  ## Milestone 1
-
-      ::  The first milestone for this project is support for basic, old-school Markdown syntax, but not
-      ::  including the Github flavor's extensions.
-
-      ::  Reward: **2 stars**
-
-      ::  ## Milestone 2
-
-      ::  TBD, based on any potential challenges encountered in Milestone 1.
-
-      ::  '''
       %+  expect-eq
         !>  "<html><body><h2>Milestone 1</h2> <p>The first milestone for this project is support for basic, old-school Markdown syntax, but not including the Github flavor&#39;s extensions. </p> <p>Reward: <strong>2 stars</strong> </p> <h2>Milestone 2</h2> <p>TBD, based on any potential challenges encountered in Milestone 1. </p></body></html>"
         !>  %-  en-xml:html  %-  markdown:sail-en:md

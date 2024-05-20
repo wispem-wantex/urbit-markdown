@@ -47,6 +47,16 @@
         !>((scan "[asdf]" link:inline:de:md))
     ==
   ::
+  ++  test-inline-image
+    ;:  weld
+      %+  expect-eq
+        !>(`image:inline:m`[%image 'Alt Text' [%direct [['url' |] ~]]])
+        !>((scan "![Alt Text](url)" image:inline:de:md))
+      %+  expect-eq
+        !>(`image:inline:m`[%image 'Alt] ] Text' [%direct [['url' |] ~]]])
+        !>((scan "![Alt\\] \\] Text](url)" image:inline:de:md))
+    ==
+  ::
   ++  test-inline-emphasis
     ;:  weld
       :: With '*'
