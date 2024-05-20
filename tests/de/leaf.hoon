@@ -54,6 +54,13 @@
       %+  expect-eq  !>(`blank-line:leaf:m`[%blank-line ~])  !>((scan "\0a" node:leaf:de:md))
     ==
   ::
+  ++  test-codeblk-indent
+    ;:  weld
+      %+  expect-eq
+        !>(`codeblk-indent:leaf:m`[%indent-codeblock 'an indented\0a  codeblock\0a'])
+        !>((scan "    an indented\0a      codeblock" codeblk-indent:leaf:de:md))
+    ==
+  ::
   ++  test-paragraph
     ;:  weld
       %+  expect-eq
@@ -134,5 +141,26 @@
                 :-  %paragraph  ~[[%text 'TBD, based on any potential challenges encountered in Milestone 1.'] [%soft-line-break ~]]
             ==
         !>((rash a markdown:de:md))
+      ::
+      :: Some weird interaction tests
+      ::
+      %+  expect-eq
+        !>  ^-  markdown:m
+            :~  :-  %paragraph  :~  [%text 'Foo']
+                                    [%soft-line-break ~]
+                                    [%text '    bar']
+                                    [%soft-line-break ~]
+                                ==
+            ==
+        !>((rash 'Foo\0a    bar' markdown:de:md))
+      ::
+      %+  expect-eq
+        !>  ^-  markdown:m
+            :~  [%indent-codeblock 'foo\0a']
+                :-  %paragraph  :~  [%text 'bar']
+                                    [%soft-line-break ~]
+                                ==
+            ==
+        !>((rash '    foo\0abar' markdown:de:md))
     ==
 --

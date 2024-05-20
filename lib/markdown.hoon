@@ -33,6 +33,7 @@
             |=  [char=@t]
             (cold char (jest (crip (snoc "\\" char))))
           ++  line-end                                     :: Either EOL or EOF
+            %+  cold  '\0a'
             ;~(pose (just '\0a') (full (easy ~)))
           ::
           ++  ln                                           ::  Links and urls
@@ -373,6 +374,7 @@
                   blank-line
                   heading
                   break
+                  codeblk-indent
                   :: ...etc
                   paragraph
                 ==
@@ -445,6 +447,20 @@
                     ;~(plug (jest '--') (plus hep))
                     ;~(plug (jest '__') (plus cab))
                   ==
+              ::
+              ++  codeblk-indent
+                %+  cook  |=(a=codeblk-indent:leaf:m a)
+                %+  stag  %indent-codeblock
+                %+  cook  |=(a=(list tape) (crip (zing a)))
+                %-  plus                                   :: 1 or more lines
+                  ;~  pfix
+                    (jest '    ')          :: 4 leading spaces
+                    %+  cook  snoc  ;~  plug
+                      (star ;~(less line-end prn))
+                      line-end
+                    ==
+                  ==
+              ::
               ++  paragraph
                 %+  cook  |=(a=paragraph:leaf:m a)
                 %+  stag  %paragraph
@@ -457,7 +473,7 @@
                     break
                     %+  cook  snoc  ;~  plug
                       %-  plus  ;~(less (jest '\0a') prn)  :: Lines must be non-empty
-                      (cold '\0a' line-end)
+                      line-end
                     ==
                   ==
             --
@@ -618,6 +634,7 @@
                   %blank-line  (blank-line n)
                   %break  (break n)
                   %heading  (heading n)
+                  %indent-codeblock  (codeblk-indent n)
                   %paragraph  (paragraph n)
                   :: ...etc
                 ==
@@ -642,6 +659,17 @@
                     =/  line  (contents:inline contents.h)
                     ;:(weld line "\0a" (reap (lent line) ?:(=(level.h 1) '-' '=')) "\0a")
                 ==
+              ::
+              ++  codeblk-indent
+                |=  [c=codeblk-indent:leaf:m]
+                ^-  tape
+                %+  rash  text.c
+                %+  cook
+                  |=  [a=(list tape)]
+                  ^-  tape
+                  %-  zing  %+  turn  a  |=(t=tape (weld "    " t))
+                %-  plus  %+  cook  snoc  ;~(plug (star ;~(less (just '\0a') prn)) (just '\0a'))
+              ::
               ++  paragraph
                 |=  [p=paragraph:leaf:m]
                 ^-  tape
@@ -740,6 +768,7 @@
               %blank-line  (blank-line n)
               %break  (break n)
               %heading  (heading n)
+              %indent-codeblock  (codeblk-indent n)
               %paragraph  (paragraph n)
               :: ...etc
             ==
@@ -764,6 +793,10 @@
             |=  [b=break:leaf:m]
             ^-  manx
             ;hr;
+          ++  codeblk-indent
+            |=  [c=codeblk-indent:leaf:m]
+            ^-  manx
+            ;code: {(trip text.c)}
           ++  paragraph
             |=  [p=paragraph:leaf:m]
             ^-  manx

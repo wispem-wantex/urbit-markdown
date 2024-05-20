@@ -97,8 +97,8 @@
       ::  Consists of at least 3 repetitions of either hep '-', cab '_', or tar '*'
       +$  break           [%break char=@t char-count=@]
       ::
-      ::  Indentation-based code block: indented 4+ spaces.  Can include newlines and blank lines.
-      +$  codeblk-indent  [%indent-codeblock indent-level=@ text=@t]
+      ::  Indentation-based code block: indented 4 spaces.  Can include newlines and blank lines.
+      +$  codeblk-indent  [%indent-codeblock text=@t]
       ::
       ::  Fenced code block: begins and ends with 3+ repetitions of tic (`) or sig (~).
       ::  Can be indented up to 3 spaces.

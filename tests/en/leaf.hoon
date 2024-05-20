@@ -43,6 +43,13 @@
       %+  expect-eq  !>("\0a")  !>((blank-line:leaf:en:md [%blank-line ~]))
     ==
   ::
+  ++  test-codeblk-indent
+    ;:  weld
+      %+  expect-eq
+        !>("    an indented\0a      codeblock\0a")
+        !>((codeblk-indent:leaf:en:md [%indent-codeblock 'an indented\0a  codeblock\0a']))
+    ==
+  ::
   ++  test-paragraph
     ;:  weld
       %+  expect-eq

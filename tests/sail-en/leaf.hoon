@@ -37,6 +37,13 @@
         !>  ^-  manx  [[%$ [%$ " "] ~] ~]
     ==
   ::
+  ++  test-codeblk-indent
+    ;:  weld
+      %+  expect-eq
+        !>  ^-  manx  ;code: {"an indented\0a  codeblock\0a"}
+        !>((codeblk-indent:leaf:sail-en:md [%indent-codeblock 'an indented\0a  codeblock\0a']))
+    ==
+  ::
   ++  test-paragraph
     ;:  weld
       %+  expect-eq
