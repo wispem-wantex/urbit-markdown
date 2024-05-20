@@ -131,6 +131,8 @@
                   emphasis
                   code
                   link
+                  image
+                  autolink
                   text
                   softbrk
                 ==
@@ -144,6 +146,8 @@
                 ;~  less                                   :: ...which doesn't match any other inline rule
                   escape
                   link
+                  image
+                  autolink
                   emphasis
                   strong
                   code
@@ -174,10 +178,10 @@
                   %+  ifix  [sel ser]                      :: Display text is wrapped in '[...]'
                     %-  star  ;~  pose                     :: Display text can contain various contents
                       escape
-                      :: code
-                      :: image
-                       ::emphasis
-                      :: NOT links
+                      emphasis
+                      strong
+                      code
+                      :: Text: =>
                       %+  knee  *text:inline:m  |.  ~+   :: recurse
                       %+  cook  |=(a=text:inline:m a)
                       %+  stag  %text
@@ -185,10 +189,9 @@
                       %-  plus                                   :: At least one character
                       ;~  less                                   :: ...which doesn't match any other inline rule
                         escape
-                        link
                         emphasis
-                        :: strong
-                        :: ...etc
+                        strong
+                        code
                         ser                                   :: No closing ']'
                         prn
                       ==
@@ -207,6 +210,15 @@
                       ;~(less ser prn)
                     ==
                   target:ln
+                ==
+              ::
+              ++  autolink
+                %+  cook  |=(a=autolink:inline:m a)
+                %+  stag  %autolink
+                %+  ifix  [gal gar]                       :: Enclosed in '<...>'
+                %+  cook  crip
+                %-  star  ;~  pose
+                  ;~(less ace gar prn)                    :: Spaces are not allowed; neither are backslash-escapes
                 ==
               ::
               ++  emphasis
@@ -527,6 +539,8 @@
                   %strong  (strong e)
                   %emphasis  (emphasis e)
                   %soft-line-break  (softbrk e)
+                  %image  (image e)
+                  %autolink  (autolink e)
                   :: ...etc
                 ==
               ++  text
@@ -552,6 +566,15 @@
                   (escape-chars alt-text.i "]")
                   "]"
                   (target:ln target.i)
+                ==
+              ::
+              ++  autolink
+                |=  [a=autolink:inline:m]
+                ^-  tape
+                ;:  weld
+                  "<"
+                  (trip text.a)
+                  ">"
                 ==
               ::
               ++  escape
@@ -651,6 +674,8 @@
               %strong  (strong e)
               %emphasis  (emphasis e)
               %soft-line-break  (softbrk e)
+              %image  (image e)
+              %autolink  (autolink e)
               :: ...etc
             ==
           ++  text
@@ -689,6 +714,10 @@
                           %ref     (~(got by reference-links) label.target)    :: Ref link; look it up
                       ==
             ;img(href (trip text.url.urlt), alt (trip alt-text.i));
+          ++  autolink
+            |=  [a=autolink:inline:m]
+            ^-  manx
+            ;a(href (trip text.a)): {(trip text.a)}
           ++  emphasis
             |=  [e=emphasis:inline:m]
             ^-  manx

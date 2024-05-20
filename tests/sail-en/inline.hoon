@@ -57,6 +57,13 @@
         !>((image:inline:sail-en:md [%image 'Alt] ] Text' [%direct [['url' |] ~]]]))
     ==
   ::
+  ++  test-inline-autolink
+    ;:  weld
+      %+  expect-eq
+        !>  ^-  manx  ;a(href "asdf"): asdf
+        !>((autolink:inline:sail-en:md [%autolink 'asdf']))
+    ==
+  ::
   ++  test-inline-emphasis
     ;:  weld
       %+  expect-eq

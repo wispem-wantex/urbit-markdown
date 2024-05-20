@@ -49,6 +49,13 @@
         !>((image:inline:en:md [%image 'Alt] ] Text' [%direct [['url' |] ~]]]))
     ==
   ::
+  ++  test-inline-autolink
+    ;:  weld
+      %+  expect-eq
+        !>("<asdf>")
+        !>((autolink:inline:en:md [%autolink 'asdf']))
+    ==
+  ::
   ++  test-inline-emphasis
     ;:  weld
       :: With '*'

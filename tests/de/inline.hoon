@@ -57,6 +57,13 @@
         !>((scan "![Alt\\] \\] Text](url)" image:inline:de:md))
     ==
   ::
+  ++  test-inline-autolink
+    ;:  weld
+      %+  expect-eq
+        !>(`autolink:inline:m`[%autolink 'asdf'])
+        !>((scan "<asdf>" autolink:inline:de:md))
+    ==
+  ::
   ++  test-inline-emphasis
     ;:  weld
       :: With '*'
