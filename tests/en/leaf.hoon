@@ -122,22 +122,22 @@
       %+  expect-eq
         !>((trip a))
         !>  %-  markdown:en:md
-            :~  [%heading %atx 2 ~[[%text 'Milestone 1']]]
-                [%blank-line ~]
-                :-  %paragraph  :~  [%text 'The first milestone for this project is support for basic, old-school Markdown syntax, but not']
-                                    [%soft-line-break ~]
-                                    [%text 'including the Github flavor\'s extensions.']
-                                    [%soft-line-break ~]
-                                ==
-                [%blank-line ~]
-                :-  %paragraph  :~  [%text 'Reward: ']
-                                    [%strong '*' ~[[%text '2 stars']]]
-                                    [%soft-line-break ~]
-                                ==
-                [%blank-line ~]
-                [%heading %atx 2 ~[[%text 'Milestone 2']]]
-                [%blank-line ~]
-                :-  %paragraph  ~[[%text 'TBD, based on any potential challenges encountered in Milestone 1.'] [%soft-line-break ~]]
+            :~  [%leaf [%heading %atx 2 ~[[%text 'Milestone 1']]]]
+                [%leaf [%blank-line ~]]
+                :+  %leaf  %paragraph   :~  [%text 'The first milestone for this project is support for basic, old-school Markdown syntax, but not']
+                                            [%soft-line-break ~]
+                                            [%text 'including the Github flavor\'s extensions.']
+                                            [%soft-line-break ~]
+                                        ==
+                [%leaf [%blank-line ~]]
+                :+  %leaf  %paragraph   :~  [%text 'Reward: ']
+                                            [%strong '*' ~[[%text '2 stars']]]
+                                            [%soft-line-break ~]
+                                        ==
+                [%leaf [%blank-line ~]]
+                [%leaf [%heading %atx 2 ~[[%text 'Milestone 2']]]]
+                [%leaf [%blank-line ~]]
+                :+  %leaf  %paragraph  ~[[%text 'TBD, based on any potential challenges encountered in Milestone 1.'] [%soft-line-break ~]]
             ==
     ==
 --

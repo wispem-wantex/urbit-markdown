@@ -20,6 +20,8 @@
                 ==
             ==
         ==
+      ::
+      ++  whitespace  (mask " \09\0a")                 ::  whitespace: space, tab, or newline
     --
 |%
   ::
@@ -28,10 +30,10 @@
     |%
       ++  de                                               ::  de:md  Deserialize (parse)
         |%
-          ++  whitespace  (mask " \09\0a")                 ::  whitespace: space, tab, or newline
           ++  escaped
             |=  [char=@t]
             (cold char (jest (crip (snoc "\\" char))))
+          ::
           ++  line-end                                     :: Either EOL or EOF
             %+  cold  '\0a'
             ;~(pose (just '\0a') (full (easy ~)))
@@ -485,14 +487,68 @@
                   ;~  less
                     heading
                     break
+                    block-quote-line:container                     :: Block quotes can interrupt paragraphs
                     %+  cook  snoc  ;~  plug
-                      %-  plus  ;~(less (jest '\0a') prn)  :: Lines must be non-empty
+                      %-  plus  ;~(less line-end prn)  :: Lines must be non-empty
                       line-end
                     ==
                   ==
             --
+          ::
+          ++  container
+            =+  |%
+                  ++  block-quote-marker
+                    ;~  plug           :: Single char '>'
+                      (stun [0 3] ace) :: Indented up to 3 spaces
+                      gar
+                      (stun [0 1] ace) :: Optionally followed by a space
+                    ==
+                  ++  block-quote-line
+                    %+  cook  snoc
+                    ;~  plug                 :: Single line...
+                      ;~  pfix  block-quote-marker           :: ...starting with ">..."
+                        (star ;~(less line-end prn))         :: can be empty
+                      ==
+                      line-end
+                    ==
+                --
+            |%
+              ++  node
+                %+  cook  |=(a=node:container:m a)
+                ;~  pose
+                  block-quote
+                ==
+              ::
+              ++  block-quote
+                %+  cook  |=(a=block-quote:container:m a)
+                %+  stag  %block-quote
+                %+  cook  |=  [a=(list tape)]
+                          (scan (zing a) markdown)
+                %-  plus                                   :: At least one line
+                ;~  pose
+                  block-quote-line
+                  %+  cook  zing  %-  plus              :: Paragraph continuation (copied from `paragraph` above)
+                    ;~  less                     :: ...basically just text that doesn't matchZ anything else
+                      heading:leaf
+                      break:leaf
+                      :: ol
+                      :: ul
+                      block-quote-marker                   :: Can't start with ">"
+                      line-end                             :: Can't be blank
+                      %+  cook  snoc  ;~  plug
+                        %-  star  ;~(less line-end prn)
+                        line-end
+                      ==
+                    ==
+                ==
+            --
+          ::
           ++  markdown
-            (star node:leaf)
+            %+  cook  |=(a=markdown:m a)
+            %-  star  ;~  pose
+              (stag %leaf node:leaf)
+              (stag %container node:container)
+            ==
         --
       ::
       ::  Enserialize (write out as text)
@@ -702,10 +758,42 @@
                 ^-  tape
                 (contents:inline contents.p)
             --
+          ::
+          ++  container
+            |%
+              ++  node
+                |=  [n=node:container:m]
+                ?+  -.n  !!
+                  %block-quote  (block-quote n)
+                ==
+              ::
+              ++  block-quote
+                |=  [b=block-quote:container:m]
+                ^-  tape
+                %+  scan  (markdown markdown.b)            :: First, render the contents
+                %+  cook  zing  %-  plus                   :: Many lines
+                  %+  cook  |=  [a=tape newline=@t]        :: Prepend each line with "> "
+                            ^-  tape
+                            ;:  weld
+                              ">"
+                              ?~(a "" " ")                 :: If the line is blank, no trailing space
+                              a
+                              "\0a"
+                            ==
+                  ;~  plug                                 :: Break into lines
+                    (star ;~(less (just '\0a') prn))
+                    (just '\0a')
+                  ==
+            --
+          ::
           ++  markdown
-            |=  [m=markdown:m]
+            |=  [a=markdown:m]
             ^-  tape
-            %-  zing  %+  turn  m  node:leaf
+            %-  zing  %+  turn  a   |=  [item=node:markdown:m]
+                                    ?-  -.item
+                                      %leaf  (node:leaf +.item)
+                                      %container  (node:container +.item)
+                                    ==
         --
     --
   ::
@@ -804,7 +892,7 @@
             |=  [h=heading:leaf:m]
             ^-  manx
             :-
-              :_  ~   ?+  level.h  !!
+              :_  ~   ?+  level.h  !!                     :: Tag and attributes; attrs are empty (~)
                         %1  %h1
                         %2  %h2
                         %3  %h3
@@ -832,12 +920,40 @@
               ;*  (~(contents inline reference-links) contents.p)
             ==
         --
+      ::
+      ++  container
+        |_  [reference-links=(map @t urlt:ln:m)]
+          ++  node
+            |=  [n=node:container:m]
+            ^-  manx
+            ?+  -.n  !!
+              %block-quote  (block-quote n)
+            ==
+          ::
+          ++  block-quote
+            |=  [b=block-quote:container:m]
+            ^-  manx
+            ;blockquote
+              ;*  (~(. markdown reference-links) markdown.b)
+            ==
+          ::
+        --
+      ::
       ++  markdown
-        |=  [m=markdown:m]
-        ^-  manx
+        =|  reference-links=(map @t urlt:ln:m)
+        |=  [a=markdown:m]
+        ^-  marl
+        %+  turn  a   |=  [item=node:markdown:m]
+                      ?-  -.item
+                        %leaf  (node:leaf +.item)
+                        %container  (node:container +.item)
+                      ==
+      ::
+      ++  document
+        |=  [d=markdown:m]
         ;html
           ;body
-            ;*  %+  turn  m  node:leaf
+            ;*  (markdown d)
           ==
         ==
     --

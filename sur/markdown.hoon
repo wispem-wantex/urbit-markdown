@@ -31,12 +31,21 @@
 |%
   ::
   ::  Markdown document or fragment: a list of nodes
-  +$  markdown  (list node:leaf)
+  ++  markdown  =<  $+  markdown
+                    (list node)
+                |%
+                  +$  node  $+  markdown-node
+                            $@  ~                   :: `$@  ~` is magic that makes recursive structures work
+                            $%  [%leaf node:leaf]
+                                [%container node:container]
+                            ==
+                --
   ::
   ++  inline
     |%
       ::  A single inline element
-      ++  element   $@  ~
+      ++  element   $+  inline-element
+                    $@  ~
                     $%(escape entity code break softbrk text emphasis strong link image autolink html)
       ::
       ::  Any amount of elements
@@ -87,7 +96,8 @@
   ::  Leaf nodes: non-nested (i.e., terminal) nodes
   ++  leaf
     |%
-      ++  node  $@  ~
+      ++  node  $+  leaf-node
+                $@  ~
                 $%(heading break codeblk-indent codeblk-fenced html link-ref-def paragraph blank-line)
       ::
       ::  Heading, either setext or ATX style
@@ -118,30 +128,24 @@
     --
   ::
   ::  Container node: can contain other nodes (either container or leaf).
-  ::+$  container-node
-  ::  $%  ::
-  ::      ::  Block quote
-  ::      $:  %block-quote
-  ::          indent-level=@          :: No more than 3 (otherwise it's an indented code-block)
-  ::          ::blocks=markdown         :: Unconstrained; can be any Markdown fragment (list of nodes)
-  ::      ==
-  ::      ::
-  ::      ::  Ordered list
-  ::      $:  %ordered-list
-  ::          indent-level=@          :: No more than 3 (otherwise it's an indented code-block)
-  ::          start-num=@
-  ::          number-marker-char=@t   :: Either dot, like  '1. asdf' or par '1) asdf'
-  ::          is-tight=?
-  ::          ::blocks=markdown         :: Unconstrained; can be any Markdown fragment (list of nodes)
-  ::      ==
-  ::      ::
-  ::      ::  Unordered list
-  ::      $:  %unordered-list
-  ::          indent-level=@
-  ::          bullet-char=@t          :: either hep (-), lus (+) or tar (*)
-  ::          is-tight=?
-  ::          ::blocks=markdown         :: Unconstrained; can be any Markdown fragment (list of nodes)
-  ::      ==
-  ::  ==
-
+  ++  container
+    |%
+      ++  node  $+  container-node
+                $@  ~
+                $%(block-quote ol ul)
+      ::
+      ::  Block quote
+      ::+$  block-quote  [%block-quote contents=markdown]
+      +$  block-quote  [%block-quote =markdown]
+      ::
+      ::  Ordered list: numbered based on first list item marker.
+      ::  Marker char can be either dot '1. asdf' or par '1) asdf'
+      ::  Can be indented up to 3 spaces
+      +$  ol  [%ol indent-level=@ marker-char=@t start-num=@ contents=markdown] :: is-tight=?
+      ::
+      ::  Unordered list: bullet point list
+      ::  Marker char can be either hep (-), lus (+) or tar (*)
+      ::  Can be indented up to 3 spaces
+      +$  ul  [%ul indent-level=@ marker-char=@t contents=markdown] :: is-tight=?
+    --
 --
