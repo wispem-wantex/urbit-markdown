@@ -244,23 +244,34 @@
                   %+  ifix  [tar tar]
                     ;~  plug
                       (easy '*')
-                      %-  plus  ;~  pose                     :: Display text can contain various contents
+                      %-  plus  ;~  pose                   :: Display text can contain various contents
                         escape
-                        :: code
-                        :: image
+                        strong
                         link
+                        autolink
+                        code
+                        image
+                        link
+                        softbrk
+                        hardbrk
                         %+  knee  *text:inline:m  |.  ~+   :: recurse
                         %+  cook  |=(a=text:inline:m a)
                         %+  stag  %text
                         %+  cook  crip
-                        %-  plus                                   :: At least one character
-                        ;~  less                                   :: ...which doesn't match any other inline rule
+                        %-  plus                           :: At least one character
+                        ;~  less                           :: ...which doesn't match any other inline rule
                           escape
+                          strong
                           link
-                          emphasis
-                          :: strong
-                          :: ...etc
-                          tar                              :: If a '*', then it's not text it's the end of the `emphasis`
+                          autolink
+                          code
+                          image
+                          link
+                          softbrk
+                          hardbrk
+                          ::
+                          tar                              :: If a '*', then it's the end of the `emphasis`
+                          ::
                           prn
                         ==
                       ==
@@ -268,23 +279,34 @@
                   %+  ifix  [cab cab]
                     ;~  plug
                       (easy '_')
-                      %-  plus  ;~  pose                     :: Display text can contain various contents
+                      %-  plus  ;~  pose                   :: Display text can contain various contents
                         escape
-                        :: code
-                        :: image
+                        strong
                         link
+                        autolink
+                        code
+                        image
+                        link
+                        softbrk
+                        hardbrk
                         %+  knee  *text:inline:m  |.  ~+   :: recurse
                         %+  cook  |=(a=text:inline:m a)
                         %+  stag  %text
                         %+  cook  crip
-                        %-  plus                                   :: At least one character
-                        ;~  less                                   :: ...which doesn't match any other inline rule
+                        %-  plus                           :: At least one character
+                        ;~  less                           :: ...which doesn't match any other inline rule
                           escape
+                          strong
                           link
-                          emphasis
-                          :: strong
-                          :: ...etc
-                          cab                              :: If a '*', then it's not text it's the end of the `emphasis`
+                          autolink
+                          code
+                          image
+                          link
+                          softbrk
+                          hardbrk
+                          ::
+                          cab                              :: If a '*', then it's the end of the `emphasis`
+                          ::
                           prn
                         ==
                       ==
@@ -292,54 +314,73 @@
                 ==
               ::
               ++  strong
-                %+  knee  *strong:inline:m  |.  ~+   :: recurse
+                %+  knee  *strong:inline:m  |.  ~+         :: recurse
                 %+  cook  |=(a=strong:inline:m a)
                 %+  stag  %strong
                 ;~  pose
                   %+  ifix  [(jest '**') (jest '**')]
                     ;~  plug
                       (easy '*')
-                      %-  plus  ;~  pose                     :: Display text can contain various contents
+                      %-  plus  ;~  pose                   :: Display text can contain various contents
                         escape
                         emphasis
-                        :: code
-                        :: image
                         link
+                        autolink
+                        code
+                        image
+                        link
+                        softbrk
+                        hardbrk
                         %+  knee  *text:inline:m  |.  ~+   :: recurse
                         %+  cook  |=(a=text:inline:m a)
                         %+  stag  %text
                         %+  cook  crip
-                        %-  plus                                   :: At least one character
-                        ;~  less                                   :: ...which doesn't match any other inline rule
+                        %-  plus                           :: At least one character
+                        ;~  less                           :: ...which doesn't match any other inline rule
                           escape
-                          link
                           emphasis
-                          :: strong
+                          link
+                          autolink
+                          code
+                          image
+                          link
+                          softbrk
+                          hardbrk
                           :: ...etc
-                          (jest '**')                              :: If a '**', then it's not text it's the end of the `emphasis`
+                          (jest '**')                      :: If a '**', then it's the end of the `emphasis`
                           prn
                         ==
                       ==
                     ==
                   %+  ifix  [(jest '__') (jest '__')]
                     ;~  plug  (easy '_')
-                      %-  plus  ;~  pose                     :: Display text can contain various contents
+                      %-  plus  ;~  pose                   :: Display text can contain various contents
                         escape
-                        :: code
-                        :: image
+                        emphasis
                         link
+                        autolink
+                        code
+                        image
+                        link
+                        softbrk
+                        hardbrk
                         %+  knee  *text:inline:m  |.  ~+   :: recurse
                         %+  cook  |=(a=text:inline:m a)
                         %+  stag  %text
                         %+  cook  crip
-                        %-  plus                                   :: At least one character
-                        ;~  less                                   :: ...which doesn't match any other inline rule
+                        %-  plus                           :: At least one character
+                        ;~  less                           :: ...which doesn't match any other inline rule
                           escape
-                          link
                           emphasis
-                          :: strong
-                          :: ...etc
-                          (jest '__')                              :: If a '**', then it's not text it's the end of the `emphasis`
+                          link
+                          autolink
+                          code
+                          image
+                          link
+                          softbrk
+                          hardbrk
+                          ::
+                          (jest '__')                      :: If a '**', then it's the end of the `emphasis`
                           prn
                         ==
                       ==

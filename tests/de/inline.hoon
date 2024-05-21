@@ -118,4 +118,18 @@
             ==
         !>((scan "The most complete and widely adopted specification is [the Github spec](https://github.github.com/gfm), which includes several non-standard extensions of the Markdown format" contents:inline:de:md))
     ==
+  ::
+  ++  test-emphasis-and-strong-interactions
+    ;:  weld
+      %+  expect-eq
+        !>  ^-  contents:inline:m  :~
+              [%emphasis '_' ~[[%strong '*' ~[[%text 'You can']]] [%text ' combine them']]]
+            ==
+        !>((scan "_**You can** combine them_" contents:inline:de:md))
+      %+  expect-eq
+        !>  ^-  contents:inline:m  :~
+              [%strong '_' ~[[%text 'Or the '] [%emphasis '*' ~[[%text 'other way']]] [%text ' around']]]
+            ==
+        !>((scan "__Or the *other way* around__" contents:inline:de:md))
+    ==
 --
