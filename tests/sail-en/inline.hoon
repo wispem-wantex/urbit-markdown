@@ -50,10 +50,10 @@
   ++  test-inline-image
     ;:  weld
       %+  expect-eq
-        !>  ^-  manx  ;img(href "url", alt "Alt Text");
+        !>  ^-  manx  ;img(src "url", alt "Alt Text");
         !>((image:inline:sail-en:md [%image 'Alt Text' [%direct [['url' |] ~]]]))
       %+  expect-eq
-        !>  ^-  manx  ;img(href "url", alt "Alt] ] Text");
+        !>  ^-  manx  ;img(src "url", alt "Alt] ] Text");
         !>((image:inline:sail-en:md [%image 'Alt] ] Text' [%direct [['url' |] ~]]]))
     ==
   ::

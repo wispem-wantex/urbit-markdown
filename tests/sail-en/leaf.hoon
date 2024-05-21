@@ -40,18 +40,24 @@
   ++  test-codeblk-indent
     ;:  weld
       %+  expect-eq
-        !>  ^-  manx  ;code: {"an indented\0a  codeblock\0a"}
+        !>  ^-  manx  ;pre
+                        ;code: {"an indented\0a  codeblock\0a"}
+                      ==
         !>((codeblk-indent:leaf:sail-en:md [%indent-codeblock 'an indented\0a  codeblock\0a']))
     ==
   ::
   ++  test-codeblk-fenced
     ;:  weld
       %+  expect-eq
-        !>  ^-  manx  ;code: {"asdf\0ajkl;\0a"}
+        !>  ^-  manx  ;pre
+                        ;code: {"asdf\0ajkl;\0a"}
+                      ==
         !>((codeblk-fenced:leaf:sail-en:md [%fenced-codeblock '`' 3 '' 0 'asdf\0ajkl;\0a']))
       :: With indent and info string
       %+  expect-eq
-        !>  ^-  manx  ;code(class "language-ruby"): {"asdf\0ajkl;\0a"}
+        !>  ^-  manx  ;pre
+                        ;code(class "language-ruby"): {"asdf\0ajkl;\0a"}
+                      ==
         !>((codeblk-fenced:leaf:sail-en:md [%fenced-codeblock '`' 3 'ruby' 2 'asdf\0ajkl;\0a']))
     ==
   ::

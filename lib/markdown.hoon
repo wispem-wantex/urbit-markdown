@@ -1190,7 +1190,7 @@
                           %direct  urlt.target                                 :: Direct link; use it
                           %ref     (~(got by reference-links) label.target)    :: Ref link; look it up
                       ==
-            ;img(href (trip text.url.urlt), alt (trip alt-text.i));
+            ;img(src (trip text.url.urlt), alt (trip alt-text.i));
           ++  autolink
             |=  [a=autolink:inline:m]
             ^-  manx
@@ -1247,13 +1247,17 @@
           ++  codeblk-indent
             |=  [c=codeblk-indent:leaf:m]
             ^-  manx
-            ;code: {(trip text.c)}
+            ;pre
+              ;code: {(trip text.c)}
+            ==
           ++  codeblk-fenced
             |=  [c=codeblk-fenced:leaf:m]
             ^-  manx
-            ?:  =(info-string.c '')
-              ;code: {(trip text.c)}
-            ;code(class (weld "language-" (trip info-string.c))): {(trip text.c)}
+            ;pre
+              ;+  ?:  =(info-string.c '')
+                    ;code: {(trip text.c)}
+                  ;code(class (weld "language-" (trip info-string.c))): {(trip text.c)}
+            ==
           ++  paragraph
             |=  [p=paragraph:leaf:m]
             ^-  manx
