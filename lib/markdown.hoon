@@ -137,6 +137,7 @@
                   autolink
                   text
                   softbrk
+                  hardbrk
                 ==
               ::
               ++  text
@@ -154,6 +155,7 @@
                   strong
                   code
                   softbrk
+                  hardbrk
                   :: ...etc
                   prn
                 ==
@@ -172,6 +174,14 @@
                 %+  stag  %soft-line-break
                 (cold ~ (just '\0a'))
               ::
+              ++  hardbrk
+                %+  cook  |=(a=hardbrk:inline:m a)
+                %+  stag  %line-break
+                %+  cold  ~
+                ;~  pose
+                  ;~(plug (jest '  ') (star ace) (just '\0a'))   :: Two or more spaces before a newline
+                  (escaped '\0a')                                :: An escaped newline
+                ==
               ++  link
                 %+  knee  *link:inline:m  |.  ~+   :: recurse
                 %+  cook  backfill-ref-link
@@ -841,6 +851,7 @@
                   %strong  (strong e)
                   %emphasis  (emphasis e)
                   %soft-line-break  (softbrk e)
+                  %line-break  (hardbrk e)
                   %image  (image e)
                   %autolink  (autolink e)
                   :: ...etc
@@ -888,6 +899,10 @@
                 |=  [s=softbrk:inline:m]
                 ^-  tape
                 "\0a"
+              ++  hardbrk
+                |=  [h=hardbrk:inline:m]
+                ^-  tape
+                "\\\0a"
               ++  code
                 |=  [c=code:inline:m]
                 ^-  tape
@@ -1125,6 +1140,7 @@
               %strong  (strong e)
               %emphasis  (emphasis e)
               %soft-line-break  (softbrk e)
+              %line-break  (hardbrk e)
               %image  (image e)
               %autolink  (autolink e)
               :: ...etc
@@ -1141,6 +1157,10 @@
             |=  [s=softbrk:inline:m]
             ^-  manx
             (text [%text ' '])
+          ++  hardbrk
+            |=  [h=hardbrk:inline:m]
+            ^-  manx
+            ;br;
           ++  code
             |=  [c=code:inline:m]
             ^-  manx

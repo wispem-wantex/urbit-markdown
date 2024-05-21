@@ -58,11 +58,15 @@
   ++  test-paragraph
     ;:  weld
       %+  expect-eq
-        !>  "<p>aaa bbb </p>"
+        !>  "<p>aaa bbb<br />ccc<br />ddd </p>"
         !>  %-  en-xml:html  %-  paragraph:leaf:sail-en:md
             :-  %paragraph  :~  [%text 'aaa']
                                 [%soft-line-break ~]
                                 [%text 'bbb']
+                                [%line-break ~]
+                                [%text 'ccc']
+                                [%line-break ~]
+                                [%text 'ddd']
                                 [%soft-line-break ~]
                             ==
       ::

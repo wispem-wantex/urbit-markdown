@@ -79,11 +79,15 @@
   ++  test-paragraph
     ;:  weld
       %+  expect-eq
-        !>("aaa\0abbb\0a")
+        !>("aaa\0abbb\\\0accc\\\0addd\0a")
         !>  %-  paragraph:leaf:en:md
             :-  %paragraph  :~  [%text 'aaa']
                                 [%soft-line-break ~]
                                 [%text 'bbb']
+                                [%line-break ~]
+                                [%text 'ccc']
+                                [%line-break ~]
+                                [%text 'ddd']
                                 [%soft-line-break ~]
                             ==
       ::

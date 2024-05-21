@@ -114,9 +114,13 @@
             :-  %paragraph  :~  [%text 'aaa']
                                 [%soft-line-break ~]
                                 [%text 'bbb']
+                                [%line-break ~]
+                                [%text 'ccc']
+                                [%line-break ~]
+                                [%text 'ddd']
                                 [%soft-line-break ~]
                             ==
-        !>((scan "aaa\0abbb" paragraph:leaf:de:md))
+        !>((scan "aaa\0abbb\\\0accc  \0addd" paragraph:leaf:de:md))
       ::
       =/  a
         '''

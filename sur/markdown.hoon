@@ -46,7 +46,7 @@
       ::  A single inline element
       ++  element   $+  inline-element
                     $@  ~
-                    $%(escape entity code break softbrk text emphasis strong link image autolink html)
+                    $%(escape entity code hardbrk softbrk text emphasis strong link image autolink html)
       ::
       ::  Any amount of elements
       ++  contents  (list element)
@@ -66,7 +66,7 @@
       +$  code      [%code-span num-backticks=@ text=@t]
       ::
       ::  Line break
-      +$  break     [%line-break ~]
+      +$  hardbrk   [%line-break ~]
       ::
       ::  Soft line break: a newline in the source code, will be rendered as a single space
       +$  softbrk   [%soft-line-break ~]
