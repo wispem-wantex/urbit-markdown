@@ -389,6 +389,8 @@
                   heading
                   break
                   codeblk-indent
+                  codeblk-fenced
+                  link-ref-def
                   :: ...etc
                   paragraph
                 ==
@@ -700,22 +702,25 @@
                 %+  stag  %block-quote
                 %+  cook  |=  [a=(list tape)]
                           (scan (zing a) markdown)
-                %-  plus                                   :: At least one line
-                ;~  pose
+                ;~  plug
                   block-quote-line
-                  %+  cook  zing  %-  plus              :: Paragraph continuation (copied from `paragraph` above)
-                    ;~  less                     :: ...basically just text that doesn't matchZ anything else
-                      heading:leaf
-                      break:leaf
-                      :: ol
-                      :: ul
-                      block-quote-marker                   :: Can't start with ">"
-                      line-end                             :: Can't be blank
-                      %+  cook  snoc  ;~  plug
-                        %-  star  ;~(less line-end prn)
-                        line-end
+                  %-  star                                   :: At least one line
+                  ;~  pose
+                    block-quote-line
+                    %+  cook  zing  %-  plus              :: Paragraph continuation (copied from `paragraph` above)
+                      ;~  less                     :: ...basically just text that doesn't matchZ anything else
+                        heading:leaf
+                        break:leaf
+                        :: ol
+                        :: ul
+                        block-quote-marker                   :: Can't start with ">"
+                        line-end                             :: Can't be blank
+                        %+  cook  snoc  ;~  plug
+                          %-  star  ;~(less line-end prn)
+                          line-end
+                        ==
                       ==
-                    ==
+                  ==
                 ==
               ::
               ++  ul
@@ -773,8 +778,8 @@
           ++  markdown
             %+  cook  |=(a=markdown:m a)
             %-  star  ;~  pose
-              (stag %leaf node:leaf)
               (stag %container node:container)
+              (stag %leaf node:leaf)
             ==
         --
       ::
