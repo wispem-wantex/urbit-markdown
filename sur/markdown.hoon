@@ -134,18 +134,17 @@
                 $@  ~
                 $%(block-quote ol ul)
       ::
-      ::  Block quote
-      ::+$  block-quote  [%block-quote contents=markdown]
+      ::  Block quote.  Can be nested.
       +$  block-quote  [%block-quote =markdown]
       ::
       ::  Ordered list: numbered based on first list item marker.
       ::  Marker char can be either dot '1. asdf' or par '1) asdf'
       ::  Can be indented up to 3 spaces
-      +$  ol  [%ol indent-level=@ marker-char=@t start-num=@ contents=markdown] :: is-tight=?
+      +$  ol  [%ol indent-level=@ marker-char=@t start-num=@ contents=(list markdown)] :: is-tight=?
       ::
       ::  Unordered list: bullet point list
       ::  Marker char can be either hep (-), lus (+) or tar (*)
       ::  Can be indented up to 3 spaces
-      +$  ul  [%ul indent-level=@ marker-char=@t contents=markdown] :: is-tight=?
+      +$  ul  [%ul indent-level=@ marker-char=@t contents=(list markdown)] :: is-tight=?
     --
 --

@@ -53,4 +53,38 @@
                       ==
               ==
     ==
+  ::
+  ++  test-unordered-list
+    ;:  weld
+      %+  expect-eq
+        ::!>  "- a\0a  b\0a- c\0a- d\0a"
+        !>  "<ul><li><p>a b </p></li><li><p>c </p></li><li><p>d </p></li></ul>"
+        !>  %-  en-xml:html  %-  ul:container:sail-en:md
+          :*  %ul  0  '-'  :~
+            ~[[%leaf %paragraph ~[[%text 'a'] [%soft-line-break ~] [%text 'b'] [%soft-line-break ~]]]]
+            ~[[%leaf %paragraph ~[[%text 'c'] [%soft-line-break ~]]]]
+            ~[[%leaf %paragraph ~[[%text 'd'] [%soft-line-break ~]]]]
+          ==  ==
+      :: With blank lines in a list item
+      %+  expect-eq
+        !>  "<ul><li><p>a </p> <p>b </p></li><li><p>c </p></li><li><p>d </p></li></ul>"
+        !>  %-  en-xml:html  %-  ul:container:sail-en:md
+          :*  %ul  2  '*'  :~
+            :~  [%leaf %paragraph ~[[%text 'a'] [%soft-line-break ~]]]
+                [%leaf %blank-line ~]
+                [%leaf %paragraph ~[[%text 'b'] [%soft-line-break ~]]]
+            ==
+            ~[[%leaf %paragraph ~[[%text 'c'] [%soft-line-break ~]]]]
+            ~[[%leaf %paragraph ~[[%text 'd'] [%soft-line-break ~]]]]
+          ==  ==
+      :: With blank lines between list items
+      %+  expect-eq
+        !>  "<ul><li><p>a b </p> </li><li><p>c </p></li><li><p>d </p></li></ul>"
+        !>  %-  en-xml:html  %-  ul:container:sail-en:md
+          :*  %ul  0  '-'  :~
+            ~[[%leaf %paragraph ~[[%text 'a'] [%soft-line-break ~] [%text 'b'] [%soft-line-break ~]]] [%leaf %blank-line ~]]
+            ~[[%leaf %paragraph ~[[%text 'c'] [%soft-line-break ~]]]]
+            ~[[%leaf %paragraph ~[[%text 'd'] [%soft-line-break ~]]]]
+          ==  ==
+    ==
 --

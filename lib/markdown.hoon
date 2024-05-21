@@ -46,7 +46,6 @@
                 |%
                   ++  with-triangles
                     ;~  plug
-                      ::(cook crip (ifix [gal gar] (star ;~(less whitespace (full gar) prn))))
                       %+  cook  crip
                         %+  ifix  [gal gar]
                         %-  star
@@ -511,12 +510,71 @@
                       ==
                       line-end
                     ==
+                  ::
+                  +$  ul-marker-t  [indent=@ char=@t len=@]
+                  ++  ul-marker
+                    %+  cook                               :: Compute the length of the whole thing
+                      |=  [prefix=tape bullet=@t suffix=tape]
+                      ^-  ul-marker-t
+                      :*  (lent prefix)
+                          bullet
+                          ;:(add 1 (lent prefix) (lent suffix))
+                      ==
+                    ;~  plug
+                      (stun [0 3] ace)
+                      ;~(pose hep lus tar)                 :: Bullet char
+                      (stun [1 4] ace)
+                    ==
+                  ::
+                  ++  line                                 :: Read a line of plain text
+                    ::%+  cook  snoc
+                    ::;~  plug
+                    ::  (star ;~(less line-end prn))
+                    ::  (cook trip ;~(sfix line-end (star (just '\0a'))))
+                    ::==
+                    %+  cook  |=([a=tape b=tape c=tape] ;:(weld a b c))
+                    ;~  plug
+                      (star ;~(less line-end prn))
+                      (cook trip line-end)
+                      (star (just '\0a'))  :: Can have blank lines in a list item
+                    ==
+                  ::
+                  ::  Produces a 3-tuple:
+                  ::  - bullet char (*, +, or -)
+                  ::  - indent level (number of spaces before the bullet)
+                  ::  - item contents (markdown)
+                  +$  ul-item-t  [char=@t indent=@ =markdown:m]
+                  ++  ul-item
+                    |*  =nail
+                    ::^-  edge
+                    :: Get the marker and indent size
+                    =/  vex  (ul-marker nail)
+                    ?~  q.vex  vex  :: If no match found, fail
+                    =/  mrkr=ul-marker-t  p:(need q.vex)
+                    :: Read the rest of the list item block
+                    %.
+                      q:(need q.vex)
+                    %+  cook
+                      |=  [a=(list tape)]
+                      ^-  ul-item-t
+                      :*  char.mrkr
+                          indent.mrkr
+                          (scan (zing a) markdown)
+                      ==
+                    ;~  plug
+                      line                                 :: First line
+                      %-  star  ;~  pfix                   :: Subsequent lines must have the same indent
+                        (stun [len.mrkr len.mrkr] ace)     :: the indent
+                        line                               :: the line
+                      ==
+                    ==
                 --
             |%
               ++  node
                 %+  cook  |=(a=node:container:m a)
                 ;~  pose
                   block-quote
+                  ul
                 ==
               ::
               ++  block-quote
@@ -540,6 +598,31 @@
                         line-end
                       ==
                     ==
+                ==
+              ::
+              ++  ul
+                |*  =nail
+                :: Start by finding the type of the first bullet (indent level and bullet char)
+                =/  vex  (ul-item nail)
+                ?~  q.vex  vex  :: Fail if it doesn't match a list item
+                =/  first-item=ul-item-t  p:(need q.vex)
+                :: Check for more list items
+                %.
+                  q:(need q.vex)
+                %+  cook  |=(a=ul:container:m a)
+                %+  stag  %ul
+                ;~  plug                                     :: Give the first item first
+                  (easy indent.first-item)
+                  (easy char.first-item)
+                  (easy markdown.first-item)
+                  %-  star
+                    %+  sear                                 :: Reject items that don't have the same bullet char
+                      |=  [item=ul-item-t]
+                      ^-  (unit markdown:m)
+                      ?.  =(char.item char.first-item)
+                        ~
+                      `markdown.item
+                    ul-item
                 ==
             --
           ::
@@ -751,7 +834,6 @@
                   (urlt:ln urlt.l)
                   "\0a"
                 ==
-
               ::
               ++  paragraph
                 |=  [p=paragraph:leaf:m]
@@ -760,6 +842,14 @@
             --
           ::
           ++  container
+            =>  |%
+                  ++  line
+                    %+  cook  snoc
+                    ;~  plug
+                      (star ;~(less (just '\0a') prn))
+                      (just '\0a')
+                    ==
+                --
             |%
               ++  node
                 |=  [n=node:container:m]
@@ -783,6 +873,33 @@
                   ;~  plug                                 :: Break into lines
                     (star ;~(less (just '\0a') prn))
                     (just '\0a')
+                  ==
+              ::
+              ++  ul
+                |=  [u=ul:container:m]
+                ^-  tape
+                %-  zing  %+  turn  contents.u             :: Each bullet point...
+                  |=  [item=markdown:m]
+                  ^-  tape
+                  %+  scan  (markdown item)                   :: First, render bullet point contents
+                  %+  cook  zing
+                  ;~  plug
+                    %+  cook  |=  [a=tape]                 :: Prepend 1st line with indent + bullet char
+                              ;:  weld
+                                (reap indent-level.u ' ')
+                                (trip marker-char.u)
+                                " "
+                                a
+                              ==
+                      line  :: first line
+                    %-  star
+                      %+  cook  |=  [a=tape]               :: Subsequent lines just get indent
+                              ;:  weld
+                                (reap indent-level.u ' ')
+                                "  "  :: 2 spaces, to make it even with the 1st line
+                                a
+                              ==
+                        line  :: second and thereafter lines
                   ==
             --
           ::
@@ -928,6 +1045,7 @@
             ^-  manx
             ?+  -.n  !!
               %block-quote  (block-quote n)
+              %ul           (ul n)
             ==
           ::
           ++  block-quote
@@ -937,6 +1055,16 @@
               ;*  (~(. markdown reference-links) markdown.b)
             ==
           ::
+          ++  ul
+            |=  [u=ul:container:m]
+            ^-  manx
+            ;ul
+              ;*  %+  turn  contents.u  |=  [a=markdown:m]
+                                        ^-  manx
+                                        ;li
+                                          ;*  (~(. markdown reference-links) a)
+                                        ==
+            ==
         --
       ::
       ++  markdown
