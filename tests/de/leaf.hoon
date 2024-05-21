@@ -61,6 +61,41 @@
         !>((scan "    an indented\0a      codeblock" codeblk-indent:leaf:de:md))
     ==
   ::
+  ++  test-codeblk-fenced
+    ;:  weld
+      :: Test code fences
+      %+  expect-eq  !>([3 '`' 5])  !>((scan "   `````" code-fence:codeblk-fenced:leaf:de:md))
+      %+  expect-eq  !>([0 '~' 3])  !>((scan "~~~" code-fence:codeblk-fenced:leaf:de:md))
+      :: Info string
+      %+  expect-eq  !>('hoon')     !>((scan "  hoon" info-string:codeblk-fenced:leaf:de:md))
+      ::
+      :: Now, whole code blocks
+      ::
+      %+  expect-eq
+        !>(`codeblk-fenced:leaf:m`[%fenced-codeblock '`' 3 '' 0 'asdf\0ajkl;\0a'])
+        !>((scan "```\0aasdf\0ajkl;\0a```" codeblk-fenced:leaf:de:md))
+      :: With indent and info string
+      %+  expect-eq
+        !>(`codeblk-fenced:leaf:m`[%fenced-codeblock '`' 3 'ruby' 2 'asdf\0ajkl;\0a'])
+        !>((scan "  ``` ruby\0a  asdf\0ajkl;\0a```" codeblk-fenced:leaf:de:md))
+      :: With blank lines
+      %+  expect-eq
+        !>(`codeblk-fenced:leaf:m`[%fenced-codeblock '~' 5 '' 0 'asdf\0a\0ajkl;\0a'])
+        !>((scan "~~~~~\0aasdf\0a\0ajkl;\0a~~~~~" codeblk-fenced:leaf:de:md))
+      :: With blank line at eof
+      %+  expect-eq
+        !>(`codeblk-fenced:leaf:m`[%fenced-codeblock '`' 3 '' 0 'asdf\0ajkl;\0a\0a'])
+        !>((scan "```\0aasdf\0ajkl;\0a\0a```" codeblk-fenced:leaf:de:md))
+      :: With no closing fence at EOF
+      %+  expect-eq
+        !>(`codeblk-fenced:leaf:m`[%fenced-codeblock '`' 3 '' 0 'asdf\0ajkl;\0a'])
+        !>((scan "```\0aasdf\0ajkl;\0a" codeblk-fenced:leaf:de:md))
+      :: With tics and sigs in it, and closing fence indented
+      %+  expect-eq
+        !>(`codeblk-fenced:leaf:m`[%fenced-codeblock '~' 4 'asdf' 0 '~~~`~````\0aASD~~~~~~\0a'])
+        !>((scan "~~~~asdf\0a~~~`~````\0aASD~~~~~~\0a   ~~~~" codeblk-fenced:leaf:de:md))
+    ==
+  ::
   ++  test-link-ref-def
     ;:  weld
       %+  expect-eq

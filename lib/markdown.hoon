@@ -462,6 +462,69 @@
                     ==
                   ==
               ::
+              ++  codeblk-fenced
+                =+  |%
+                      :: Returns a 3-tuple:
+                      :: - indent size
+                      :: - char type
+                      :: - fence length
+                      ++  code-fence
+                        ;~  plug
+                          %+  cook  |=(a=tape (lent a))  (stun [0 3] ace)
+                          %+  cook  |=(a=tape [(head a) (lent a)])   :: Get code fence char and length
+                          ;~  pose
+                            (stun [3 999.999.999] sig)
+                            (stun [3 999.999.999] tic)
+                          ==
+                        ==
+                      ::
+                      ++  info-string
+                        %+  cook  crip
+                        %+  ifix  [(star ace) line-end]    :: Strip leading whitespace
+                        (star ;~(less line-end tic prn))   :: No backticks in a code fence
+                    --
+                |*  =nail
+                :: Get the marker and indent size
+                =/  vex  (code-fence nail)
+                ?~  q.vex  vex  :: If no match found, fail
+                =/  [indent=@ char=@t len=@]  p:(need q.vex)
+                =/  closing-fence
+                  ;~  plug
+                    (star ace)
+                    (stun [len 999.999.999] (just char))   :: Closing fence must be at least as long as opener
+                    (star ace)                             :: ...and cannot have any following text except space
+                    line-end
+                  ==
+                :: Read the rest of the list item block
+                %.
+                  q:(need q.vex)
+                %+  cook  |=(a=codeblk-fenced:leaf:m a)
+                %+  stag  %fenced-codeblock
+                ;~  plug
+                  %+  cook  |=(a=@t a)  (easy char)
+                  (easy len)
+                  %+  cook  |=(a=@t a)  info-string
+                  (easy indent)
+                  %+  cook  |=(a=(list tape) (crip (zing a)))
+                  ;~  sfix
+                    %-  star                               :: Any amount of lines
+                    ;~  less  closing-fence                :: ...until the closing code fence
+                      ;~  pfix  (stun [0 indent] ace)      :: Strip indent up to that of the opening fence
+                        %+  cook  |=(a=tape a)
+                        ;~  pose                           :: Avoid infinite loop at EOF
+                          %+  cook  trip  (just '\0a')     :: A line is either a blank line...
+                          %+  cook  snoc
+                          ;~  plug                         :: Or a non-blank line
+                            (plus ;~(less line-end prn))
+                            line-end
+                          ==
+                        ==
+                      ==
+                    ==
+                    ;~(pose closing-fence (full (easy ~)))
+                  ==
+                ==
+              ::
               ++  link-ref-def
                 %+  cook  |=(a=link-ref-def:leaf:m a)
                 %+  stag  %link-ref-definition
@@ -498,11 +561,6 @@
             =+  |%
                   ::
                   ++  line                                 :: Read a line of plain text
-                    ::%+  cook  snoc
-                    ::;~  plug
-                    ::  (star ;~(less line-end prn))
-                    ::  (cook trip ;~(sfix line-end (star (just '\0a'))))
-                    ::==
                     %+  cook  |=([a=tape b=tape c=tape] ;:(weld a b c))
                     ;~  plug
                       (star ;~(less line-end prn))
@@ -546,7 +604,6 @@
                   +$  ul-item-t  [char=@t indent=@ =markdown:m]
                   ++  ul-item
                     |*  =nail
-                    ::^-  edge
                     :: Get the marker and indent size
                     =/  vex  (ul-marker nail)
                     ?~  q.vex  vex  :: If no match found, fail
@@ -864,6 +921,7 @@
                   %break  (break n)
                   %heading  (heading n)
                   %indent-codeblock  (codeblk-indent n)
+                  %fenced-codeblock  (codeblk-fenced n)
                   %link-ref-definition  (link-ref-def n)
                   %paragraph  (paragraph n)
                   :: ...etc
@@ -899,6 +957,32 @@
                   ^-  tape
                   %-  zing  %+  turn  a  |=(t=tape (weld "    " t))
                 %-  plus  %+  cook  snoc  ;~(plug (star ;~(less (just '\0a') prn)) (just '\0a'))
+              ::
+              ++  codeblk-fenced
+                |=  [c=codeblk-fenced:leaf:m]
+                ^-  tape
+                ;:  weld
+                  (reap indent-level.c ' ')
+                  (reap char-count.c char.c)
+                  (trip info-string.c)
+                  "\0a"
+                  ^-  tape  %+  rash  text.c
+                  %+  cook  zing  %-  star                   :: Many lines
+                    %+  cook  |=  [a=tape newline=@t]        :: Prepend each line with "> "
+                              ^-  tape
+                              ;:  weld
+                                  ?~(a "" (reap indent-level.c ' '))   :: If the line is blank, no indent
+                                  a
+                                  "\0a"
+                              ==
+                    ;~  plug                                 :: Break into lines
+                      (star ;~(less (just '\0a') prn))
+                      (just '\0a')
+                    ==
+                  (reap indent-level.c ' ')
+                  (reap char-count.c char.c)
+                  "\0a"
+                ==
               ::
               ++  link-ref-def
                 |=  [l=link-ref-def:leaf:m]
@@ -1108,6 +1192,7 @@
               %break  (break n)
               %heading  (heading n)
               %indent-codeblock  (codeblk-indent n)
+              %fenced-codeblock  (codeblk-fenced n)
               %paragraph  (paragraph n)
               %link-ref-definition  (text:inline [%text ' '])  :: Link ref definitions don't render as anything
               :: ...etc
@@ -1137,6 +1222,12 @@
             |=  [c=codeblk-indent:leaf:m]
             ^-  manx
             ;code: {(trip text.c)}
+          ++  codeblk-fenced
+            |=  [c=codeblk-fenced:leaf:m]
+            ^-  manx
+            ?:  =(info-string.c '')
+              ;code: {(trip text.c)}
+            ;code(class (weld "language-" (trip info-string.c))): {(trip text.c)}
           ++  paragraph
             |=  [p=paragraph:leaf:m]
             ^-  manx

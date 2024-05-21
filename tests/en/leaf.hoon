@@ -50,6 +50,25 @@
         !>((codeblk-indent:leaf:en:md [%indent-codeblock 'an indented\0a  codeblock\0a']))
     ==
   ::
+  ++  test-codeblk-fenced
+    ;:  weld
+      %+  expect-eq
+        !>("```\0aasdf\0ajkl;\0a```\0a")
+        !>((codeblk-fenced:leaf:en:md [%fenced-codeblock '`' 3 '' 0 'asdf\0ajkl;\0a']))
+      :: With indent and info string
+      %+  expect-eq
+        !>("  ```ruby\0a  asdf\0a  jkl;\0a  ```\0a")
+        !>((codeblk-fenced:leaf:en:md [%fenced-codeblock '`' 3 'ruby' 2 'asdf\0ajkl;\0a']))
+      :: With blank lines
+      %+  expect-eq
+        !>("~~~~~\0aasdf\0a\0ajkl;\0a~~~~~\0a")
+        !>((codeblk-fenced:leaf:en:md [%fenced-codeblock '~' 5 '' 0 'asdf\0a\0ajkl;\0a']))
+      :: With tics and sigs in it
+      %+  expect-eq
+        !>("~~~~asdf\0a~~~`~````\0aASD~~~~~~\0a~~~~\0a")
+        !>((codeblk-fenced:leaf:en:md [%fenced-codeblock '~' 4 'asdf' 0 '~~~`~````\0aASD~~~~~~\0a']))
+    ==
+  ::
   ++  test-link-ref-def
     ;:  weld
       %+  expect-eq
