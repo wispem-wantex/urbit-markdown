@@ -114,4 +114,37 @@
             ~[[%leaf %paragraph ~[[%text 'd'] [%soft-line-break ~]]]]
           ==  ==
     ==
+  ::
+  ++  test-ordered-list
+    ;:  weld
+      %+  expect-eq
+        !>("4. a\0a   b\0a4. c\0a4. d\0a")
+        !>  %-  ol:container:en:md
+          :*  %ol  0  '.'  4  :~
+            ~[[%leaf %paragraph ~[[%text 'a'] [%soft-line-break ~] [%text 'b'] [%soft-line-break ~]]]]
+            ~[[%leaf %paragraph ~[[%text 'c'] [%soft-line-break ~]]]]
+            ~[[%leaf %paragraph ~[[%text 'd'] [%soft-line-break ~]]]]
+          ==  ==
+      :: With blank lines in a list item
+      %+  expect-eq
+        !>("  3) a\0a     \0a     b\0a  3) c\0a  3) d\0a")
+        !>  %-  ol:container:en:md
+          :*  %ol  2  ')'  3  :~
+            :~  [%leaf %paragraph ~[[%text 'a'] [%soft-line-break ~]]]
+                [%leaf %blank-line ~]
+                [%leaf %paragraph ~[[%text 'b'] [%soft-line-break ~]]]
+            ==
+            ~[[%leaf %paragraph ~[[%text 'c'] [%soft-line-break ~]]]]
+            ~[[%leaf %paragraph ~[[%text 'd'] [%soft-line-break ~]]]]
+          ==  ==
+      :: With blank lines between list items
+      %+  expect-eq
+        !>("   999999999. a\0a              b\0a              \0a   999999999. c\0a   999999999. d\0a")
+        !>  %-  ol:container:en:md
+          :*  %ol  3  '.'  999.999.999  :~
+            ~[[%leaf %paragraph ~[[%text 'a'] [%soft-line-break ~] [%text 'b'] [%soft-line-break ~]]] [%leaf %blank-line ~]]
+            ~[[%leaf %paragraph ~[[%text 'c'] [%soft-line-break ~]]]]
+            ~[[%leaf %paragraph ~[[%text 'd'] [%soft-line-break ~]]]]
+          ==  ==
+    ==
 --

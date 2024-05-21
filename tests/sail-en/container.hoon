@@ -87,4 +87,37 @@
             ~[[%leaf %paragraph ~[[%text 'd'] [%soft-line-break ~]]]]
           ==  ==
     ==
+  ::
+  ++  test-ordered-list
+    ;:  weld
+      %+  expect-eq
+        !>  "<ol start=\"4\"><li><p>a b </p></li><li><p>c </p></li><li><p>d </p></li></ol>"
+        !>  %-  en-xml:html  %-  ol:container:sail-en:md
+          :*  %ol  0  '.'  4  :~
+            ~[[%leaf %paragraph ~[[%text 'a'] [%soft-line-break ~] [%text 'b'] [%soft-line-break ~]]]]
+            ~[[%leaf %paragraph ~[[%text 'c'] [%soft-line-break ~]]]]
+            ~[[%leaf %paragraph ~[[%text 'd'] [%soft-line-break ~]]]]
+          ==  ==
+      :: With blank lines in a list item
+      %+  expect-eq
+        !>  "<ol start=\"3\"><li><p>a </p> <p>b </p></li><li><p>c </p></li><li><p>d </p></li></ol>"
+        !>  %-  en-xml:html  %-  ol:container:sail-en:md
+          :*  %ol  2  ')'  3  :~
+            :~  [%leaf %paragraph ~[[%text 'a'] [%soft-line-break ~]]]
+                [%leaf %blank-line ~]
+                [%leaf %paragraph ~[[%text 'b'] [%soft-line-break ~]]]
+            ==
+            ~[[%leaf %paragraph ~[[%text 'c'] [%soft-line-break ~]]]]
+            ~[[%leaf %paragraph ~[[%text 'd'] [%soft-line-break ~]]]]
+          ==  ==
+      :: With blank lines between list items
+      %+  expect-eq
+        !>  "<ol start=\"999999999\"><li><p>a b </p> </li><li><p>c </p></li><li><p>d </p></li></ol>"
+        !>  %-  en-xml:html  %-  ol:container:sail-en:md
+          :*  %ol  3  '.'  999.999.999  :~
+            ~[[%leaf %paragraph ~[[%text 'a'] [%soft-line-break ~] [%text 'b'] [%soft-line-break ~]]] [%leaf %blank-line ~]]
+            ~[[%leaf %paragraph ~[[%text 'c'] [%soft-line-break ~]]]]
+            ~[[%leaf %paragraph ~[[%text 'd'] [%soft-line-break ~]]]]
+          ==  ==
+    ==
 --

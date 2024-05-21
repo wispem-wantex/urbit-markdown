@@ -496,6 +496,19 @@
           ::
           ++  container
             =+  |%
+                  ::
+                  ++  line                                 :: Read a line of plain text
+                    ::%+  cook  snoc
+                    ::;~  plug
+                    ::  (star ;~(less line-end prn))
+                    ::  (cook trip ;~(sfix line-end (star (just '\0a'))))
+                    ::==
+                    %+  cook  |=([a=tape b=tape c=tape] ;:(weld a b c))
+                    ;~  plug
+                      (star ;~(less line-end prn))
+                      (cook trip line-end)
+                      (star (just '\0a'))  :: Can have blank lines in a list item
+                    ==
                   ++  block-quote-marker
                     ;~  plug           :: Single char '>'
                       (stun [0 3] ace) :: Indented up to 3 spaces
@@ -524,19 +537,6 @@
                       (stun [0 3] ace)
                       ;~(pose hep lus tar)                 :: Bullet char
                       (stun [1 4] ace)
-                    ==
-                  ::
-                  ++  line                                 :: Read a line of plain text
-                    ::%+  cook  snoc
-                    ::;~  plug
-                    ::  (star ;~(less line-end prn))
-                    ::  (cook trip ;~(sfix line-end (star (just '\0a'))))
-                    ::==
-                    %+  cook  |=([a=tape b=tape c=tape] ;:(weld a b c))
-                    ;~  plug
-                      (star ;~(less line-end prn))
-                      (cook trip line-end)
-                      (star (just '\0a'))  :: Can have blank lines in a list item
                     ==
                   ::
                   ::  Produces a 3-tuple:
@@ -568,6 +568,55 @@
                         line                               :: the line
                       ==
                     ==
+                  ::
+                  +$  ol-marker-t  [indent=@ char=@t number=@ len=@]
+                  ++  ol-marker
+                    %+  cook                               :: Compute the length of the whole thing
+                      |=  [prefix=tape number=@ char=@t suffix=tape]
+                      ^-  ol-marker-t
+                      :*  (lent prefix)
+                          char
+                          number
+                          ;:(add 1 (lent (a-co:co number)) (lent prefix) (lent suffix))
+                      ==
+                    ;~  plug
+                      (stun [0 3] ace)
+                      dem
+                      ;~(pose dot par)                 :: Bullet char
+                      (stun [1 4] ace)
+                    ==
+                  ::
+                  ::  Produces a 4-tuple:
+                  ::  - delimiter char: either dot '.' or par ')'
+                  ::  - list item number
+                  ::  - indent level (number of spaces before the number)
+                  ::  - item contents (markdown)
+                  +$  ol-item-t  [char=@t number=@ indent=@ =markdown:m]
+                  ++  ol-item
+                    |*  =nail
+                    ::^-  edge
+                    :: Get the marker and indent size
+                    =/  vex  (ol-marker nail)
+                    ?~  q.vex  vex  :: If no match found, fail
+                    =/  mrkr=ol-marker-t  p:(need q.vex)
+                    :: Read the rest of the list item block
+                    %.
+                      q:(need q.vex)
+                    %+  cook
+                      |=  [a=(list tape)]
+                      ^-  ol-item-t
+                      :*  char.mrkr
+                          number.mrkr
+                          indent.mrkr
+                          (scan (zing a) markdown)
+                      ==
+                    ;~  plug
+                      line                                 :: First line
+                      %-  star  ;~  pfix                   :: Subsequent lines must have the same indent
+                        (stun [len.mrkr len.mrkr] ace)     :: the indent
+                        line                               :: the line
+                      ==
+                    ==
                 --
             |%
               ++  node
@@ -575,6 +624,7 @@
                 ;~  pose
                   block-quote
                   ul
+                  ol
                 ==
               ::
               ++  block-quote
@@ -611,7 +661,7 @@
                   q:(need q.vex)
                 %+  cook  |=(a=ul:container:m a)
                 %+  stag  %ul
-                ;~  plug                                     :: Give the first item first
+                ;~  plug                                     :: Give the first item, first
                   (easy indent.first-item)
                   (easy char.first-item)
                   (easy markdown.first-item)
@@ -623,6 +673,32 @@
                         ~
                       `markdown.item
                     ul-item
+                ==
+              ::
+              ++  ol
+                |*  =nail
+                :: Start by finding the first number, char, and indent level
+                =/  vex  (ol-item nail)
+                ?~  q.vex  vex  :: Fail if it doesn't match a list item
+                =/  first-item=ol-item-t  p:(need q.vex)
+                :: Check for more list items
+                %.
+                  q:(need q.vex)
+                %+  cook  |=(a=ol:container:m a)
+                %+  stag  %ol
+                ;~  plug                                     :: Give the first item, first
+                  (easy indent.first-item)
+                  (easy char.first-item)
+                  (easy number.first-item)
+                  (easy markdown.first-item)
+                  %-  star
+                    %+  sear                                 :: Reject items that don't have the same delimiter
+                      |=  [item=ol-item-t]
+                      ^-  (unit markdown:m)
+                      ?.  =(char.item char.first-item)
+                        ~
+                      `markdown.item
+                    ol-item
                 ==
             --
           ::
@@ -853,8 +929,10 @@
             |%
               ++  node
                 |=  [n=node:container:m]
-                ?+  -.n  !!
+                ?-  -.n
                   %block-quote  (block-quote n)
+                  %ul           (ul n)
+                  %ol           (ol n)
                 ==
               ::
               ++  block-quote
@@ -896,6 +974,35 @@
                       %+  cook  |=  [a=tape]               :: Subsequent lines just get indent
                               ;:  weld
                                 (reap indent-level.u ' ')
+                                "  "  :: 2 spaces, to make it even with the 1st line
+                                a
+                              ==
+                        line  :: second and thereafter lines
+                  ==
+              ::
+              ++  ol
+                |=  [o=ol:container:m]
+                ^-  tape
+                %-  zing  %+  turn  contents.o             :: Each item...
+                  |=  [item=markdown:m]
+                  ^-  tape
+                  %+  scan  (markdown item)                   :: First, render item contents
+                  %+  cook  zing
+                  ;~  plug
+                    %+  cook  |=  [a=tape]                 :: Prepend 1st line with indent + item number
+                              ;:  weld
+                                (reap indent-level.o ' ')
+                                (a-co:co start-num.o)
+                                (trip marker-char.o)
+                                " "
+                                a
+                              ==
+                      line  :: first line
+                    %-  star
+                      %+  cook  |=  [a=tape]               :: Subsequent lines just get indent
+                              ;:  weld
+                                (reap indent-level.o ' ')
+                                (reap (lent (a-co:co start-num.o)) ' ')
                                 "  "  :: 2 spaces, to make it even with the 1st line
                                 a
                               ==
@@ -1043,9 +1150,10 @@
           ++  node
             |=  [n=node:container:m]
             ^-  manx
-            ?+  -.n  !!
+            ?-  -.n
               %block-quote  (block-quote n)
               %ul           (ul n)
+              %ol           (ol n)
             ==
           ::
           ++  block-quote
@@ -1060,6 +1168,17 @@
             ^-  manx
             ;ul
               ;*  %+  turn  contents.u  |=  [a=markdown:m]
+                                        ^-  manx
+                                        ;li
+                                          ;*  (~(. markdown reference-links) a)
+                                        ==
+            ==
+          ::
+          ++  ol
+            |=  [o=ol:container:m]
+            ^-  manx
+            ;ol(start (a-co:co start-num.o))
+              ;*  %+  turn  contents.o  |=  [a=markdown:m]
                                         ^-  manx
                                         ;li
                                           ;*  (~(. markdown reference-links) a)

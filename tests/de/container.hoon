@@ -103,20 +103,20 @@
   ++  test-unordered-list-item
     ;:  weld
       %+  expect-eq
-        !>(`[@t @ markdown:m]`['-' 0 ~[[%leaf %paragraph ~[[%text 'asdf'] [%soft-line-break ~] [%text 'jkl;'] [%soft-line-break ~]]]]])
-        !>(`[@t @ markdown:m]`(scan "- asdf\0a  jkl;" ul-item:container:de:md))
+        !>(`ul-item-t:container:de:md`['-' 0 ~[[%leaf %paragraph ~[[%text 'asdf'] [%soft-line-break ~] [%text 'jkl;'] [%soft-line-break ~]]]]])
+        !>((scan "- asdf\0a  jkl;" ul-item:container:de:md))
       :: With only 1 line
       %+  expect-eq
-        !>(`[@t @ markdown:m]`['-' 0 ~[[%leaf %paragraph ~[[%text 'asdf'] [%soft-line-break ~]]]]])
-        !>(`[@t @ markdown:m]`(scan "- asdf" ul-item:container:de:md))
+        !>(`ul-item-t:container:de:md`['-' 0 ~[[%leaf %paragraph ~[[%text 'asdf'] [%soft-line-break ~]]]]])
+        !>((scan "- asdf" ul-item:container:de:md))
       :: With hanging indent
       %+  expect-eq
-        !>(`[@t @ markdown:m]`['-' 0 ~[[%leaf %paragraph ~[[%text 'asdf'] [%soft-line-break ~] [%text '  jkl;'] [%soft-line-break ~]]]]])
-        !>(`[@t @ markdown:m]`(scan "- asdf\0a    jkl;" ul-item:container:de:md))
+        !>(`ul-item-t:container:de:md`['-' 0 ~[[%leaf %paragraph ~[[%text 'asdf'] [%soft-line-break ~] [%text '  jkl;'] [%soft-line-break ~]]]]])
+        !>((scan "- asdf\0a    jkl;" ul-item:container:de:md))
       :: With leading indent
       %+  expect-eq
-        !>(`[@t @ markdown:m]`['+' 3 ~[[%leaf %paragraph ~[[%text 'asdf'] [%soft-line-break ~] [%text 'jkl;'] [%soft-line-break ~]]]]])
-        !>(`[@t @ markdown:m]`(scan "   + asdf\0a     jkl;" ul-item:container:de:md))
+        !>(`ul-item-t:container:de:md`['+' 3 ~[[%leaf %paragraph ~[[%text 'asdf'] [%soft-line-break ~] [%text 'jkl;'] [%soft-line-break ~]]]]])
+        !>((scan "   + asdf\0a     jkl;" ul-item:container:de:md))
     ==
   ::
   ++  test-unordered-list
@@ -171,5 +171,87 @@
             ~[[%leaf %paragraph ~[[%text 'd'] [%soft-line-break ~]]]]
           ==  ==
         !>((scan "- a\0a  b\0a  \0a- c\0a- d" ul:container:de:md))
+    ==
+  ::
+  ::  Ordered lists
+  ::  ---------------
+  ::
+  ++  test-ol-marker
+    ;:  weld
+      %+  expect-eq  !>([0 '.' 1 3])  !>((scan "1. " ol-marker:container:de:md))
+      %+  expect-eq  !>([2 ')' 98.776 11])  !>((scan "  98776)   " ol-marker:container:de:md))
+    ==
+  ::
+  ++  test-ordered-list-item
+    ;:  weld
+      %+  expect-eq
+        !>(`ol-item-t:container:de:md`['.' 1 0 ~[[%leaf %paragraph ~[[%text 'asdf'] [%soft-line-break ~] [%text 'jkl;'] [%soft-line-break ~]]]]])
+        !>((scan "1. asdf\0a   jkl;" ol-item:container:de:md))
+      :: With only 1 line
+      %+  expect-eq
+        !>(`ol-item-t:container:de:md`[')' 3 0 ~[[%leaf %paragraph ~[[%text 'asdf'] [%soft-line-break ~]]]]])
+        !>((scan "3)  asdf" ol-item:container:de:md))
+      :: With hanging indent
+      %+  expect-eq
+        !>(`ol-item-t:container:de:md`[')' 23 0 ~[[%leaf %paragraph ~[[%text 'asdf'] [%soft-line-break ~] [%text '  jkl;'] [%soft-line-break ~]]]]])
+        !>((scan "23) asdf\0a      jkl;" ol-item:container:de:md))
+      :: With leading indent
+      %+  expect-eq
+        !>(`ol-item-t:container:de:md`['.' 900 3 ~[[%leaf %paragraph ~[[%text 'asdf'] [%soft-line-break ~] [%text 'jkl;'] [%soft-line-break ~]]]]])
+        !>((scan "   900. asdf\0a        jkl;" ol-item:container:de:md))
+    ==
+  ::
+  ++  test-ordered-list
+    ;:  weld
+      %+  expect-eq
+        !>  ^-  ol:container:m
+          :*  %ol  0  '.'  4  :~
+            ~[[%leaf %paragraph ~[[%text 'a'] [%soft-line-break ~] [%text 'b'] [%soft-line-break ~]]]]
+            ~[[%leaf %paragraph ~[[%text 'c'] [%soft-line-break ~]]]]
+            ~[[%leaf %paragraph ~[[%text 'd'] [%soft-line-break ~]]]]
+          ==  ==
+        !>((scan "4. a\0a   b\0a2. c\0a3. d" ol:container:de:md))
+      :: With blank lines in a list item
+      %+  expect-eq
+        !>  ^-  ol:container:m
+          :*  %ol  2  ')'  3  :~
+            :~  [%leaf %paragraph ~[[%text 'a'] [%soft-line-break ~]]]
+                [%leaf %blank-line ~]
+                [%leaf %paragraph ~[[%text 'b'] [%soft-line-break ~]]]
+            ==
+            ~[[%leaf %paragraph ~[[%text 'c'] [%soft-line-break ~]]]]
+            ~[[%leaf %paragraph ~[[%text 'd'] [%soft-line-break ~]]]]
+          ==  ==
+        !>((scan "  3) a\0a\0a     b\0a  20) c\0a  1) d" ol:container:de:md))
+      :: With blank lines in a list item, and they have spaces
+      %+  expect-eq
+        !>  ^-  ol:container:m
+          :*  %ol  0  ')'  0  :~
+            :~  [%leaf %paragraph ~[[%text 'a'] [%soft-line-break ~]]]
+                [%leaf %blank-line ~]
+                [%leaf %paragraph ~[[%text 'b'] [%soft-line-break ~]]]
+            ==
+            ~[[%leaf %paragraph ~[[%text 'c'] [%soft-line-break ~]]]]
+            ~[[%leaf %paragraph ~[[%text 'd'] [%soft-line-break ~]]]]
+          ==  ==
+        !>((scan "0)   a\0a     \0a     b\0a1)   c\0a2)   d" ol:container:de:md))
+      :: With blank lines between list items
+      %+  expect-eq
+        !>  ^-  ol:container:m
+          :*  %ol  0  '.'  1.000  :~
+            ~[[%leaf %paragraph ~[[%text 'a'] [%soft-line-break ~] [%text 'b'] [%soft-line-break ~]]] [%leaf %blank-line ~]]
+            ~[[%leaf %paragraph ~[[%text 'c'] [%soft-line-break ~]]]]
+            ~[[%leaf %paragraph ~[[%text 'd'] [%soft-line-break ~]]]]
+          ==  ==
+        !>((scan "1000. a\0a      b\0a\0a1001. c\0a1002. d" ol:container:de:md))
+      :: With blank lines with spaces between list items
+      %+  expect-eq
+        !>  ^-  ol:container:m
+          :*  %ol  3  '.'  999.999.999  :~
+            ~[[%leaf %paragraph ~[[%text 'a'] [%soft-line-break ~] [%text 'b'] [%soft-line-break ~]]] [%leaf %blank-line ~]]
+            ~[[%leaf %paragraph ~[[%text 'c'] [%soft-line-break ~]]]]
+            ~[[%leaf %paragraph ~[[%text 'd'] [%soft-line-break ~]]]]
+          ==  ==
+        !>((scan "   999999999. a\0a              b\0a              \0a   0. c\0a1000000000000. d" ol:container:de:md))
     ==
 --
