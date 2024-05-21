@@ -21,7 +21,7 @@
             ==
         ==
       ::
-      ++  whitespace  (mask " \09\0a")                 ::  whitespace: space, tab, or newline
+      ++  whitespace  (mask " \09\0d\0a")                 ::  whitespace: space, tab, or newline
     --
 |%
   ::
@@ -34,9 +34,12 @@
             |=  [char=@t]
             (cold char (jest (crip (snoc "\\" char))))
           ::
+          ++  newline
+            %+  cold  '\0a'                                :: EOL, with or without carriage return '\0d'
+            ;~(pfix ;~(pose (just '\0d') (easy ~)) (just '\0a'))
           ++  line-end                                     :: Either EOL or EOF
             %+  cold  '\0a'
-            ;~(pose (just '\0a') (full (easy ~)))
+            ;~(pose newline (full (easy ~)))
           ::
           ++  ln                                           ::  Links and urls
             |%
@@ -52,7 +55,7 @@
                         ;~  pose
                           (escaped '<')
                           (escaped '>')
-                          ;~(less gal gar (just '\0a') prn)    :: Anything except '<', '>' or newline
+                          ;~(less gal gar line-end prn)    :: Anything except '<', '>' or newline
                         ==
                       (easy %.y)                               :: "yes triangles"
                     ==
@@ -67,7 +70,7 @@
                                   ;~  pose
                                     (escaped '(')
                                     (escaped ')')
-                                    ;~(less pal par (just '\0a') prn)    :: Anything except '(', ')' or newline
+                                    ;~(less pal par line-end prn)    :: Anything except '(', ')' or newline
                                   ==
                               ==
                         ==
@@ -172,15 +175,15 @@
               ++  softbrk                                  :: Newline
                 %+  cook  |=(a=softbrk:inline:m a)
                 %+  stag  %soft-line-break
-                (cold ~ (just '\0a'))
+                (cold ~ newline)
               ::
               ++  hardbrk
                 %+  cook  |=(a=hardbrk:inline:m a)
                 %+  stag  %line-break
                 %+  cold  ~
                 ;~  pose
-                  ;~(plug (jest '  ') (star ace) (just '\0a'))   :: Two or more spaces before a newline
-                  (escaped '\0a')                                :: An escaped newline
+                  ;~(plug (jest '  ') (star ace) newline)   :: Two or more spaces before a newline
+                  ;~(plug (just '\\') newline)              :: An escaped newline
                 ==
               ++  link
                 %+  knee  *link:inline:m  |.  ~+   :: recurse
@@ -392,7 +395,7 @@
               ++  blank-line
                 %+  cook  |=(a=blank-line:leaf:m a)
                 %+  stag  %blank-line
-                (cold ~ (just '\0a'))
+                (cold ~ newline)
               ++  heading
                 =<  %+  cook  |=(a=heading:leaf:m a)
                     %+  stag  %heading
@@ -414,8 +417,6 @@
                       (stun [0 3] ace)                     :: Ignore up to 3 leading spaces
                       ;~  plug
                         (cook |=(a=tape (lent a)) (stun [1 6] hax))                   :: Heading level
-                        ::%+  cook
-                        ::  |=([a=tape] (scan text contents:inline))
                         %+  ifix  [(plus ace) atx-eol]     :: One leading space is required; rest is ignored
                           %-  star
                           ;~(less atx-eol prn)             :: Trailing haxes/spaces are ignored
@@ -428,9 +429,9 @@
                       [level (scan text contents:inline)]
                     ;~  plug                                   :: Wow this is a mess
                       %+  ifix  [(stun [0 3] ace) (star ace)]  :: Strip up to 3 spaces, and trailing space
-                        (star ;~(less ;~(pfix (star ace) (just '\0a')) prn))     :: Any text...
+                        (star ;~(less ;~(pfix (star ace) newline) prn))     :: Any text...
                       ;~  pfix
-                        (just '\0a')                         :: ...followed by newline...
+                        newline                         :: ...followed by newline...
                         (stun [0 3] ace)                     :: ...up to 3 spaces (stripped)...
                         ;~  sfix
                           ;~  pose                             :: ...and an underline
@@ -451,7 +452,7 @@
                 %+  ifix  :-  (stun [0 3] ace)                  :: Strip indent and trailing space
                               ;~  plug
                                 (star (mask " \09"))
-                                (just '\0a')                    :: No other chars allowed on the line
+                                newline                    :: No other chars allowed on the line
                               ==
                   ;~  pose
                     ;~(plug (jest '**') (plus tar))       :: At least 3, but can be more
@@ -522,7 +523,7 @@
                       ;~  pfix  (stun [0 indent] ace)      :: Strip indent up to that of the opening fence
                         %+  cook  |=(a=tape a)
                         ;~  pose                           :: Avoid infinite loop at EOF
-                          %+  cook  trip  (just '\0a')     :: A line is either a blank line...
+                          %+  cook  trip  newline     :: A line is either a blank line...
                           %+  cook  snoc
                           ;~  plug                         :: Or a non-blank line
                             (plus ;~(less line-end prn))
@@ -543,7 +544,7 @@
                     ;~(sfix label:ln col)                 :: Label (enclosed in "[...]"), followed by col ":"
                     ;~  pfix                                :: Optional whitespace, including up to 1 newline
                       (star ace)
-                      (stun [0 1] (just '\0a'))
+                      (stun [0 1] newline)
                       (star ace)
                       urlt:ln
                     ==
@@ -575,7 +576,7 @@
                     ;~  plug
                       (star ;~(less line-end prn))
                       (cook trip line-end)
-                      (star (just '\0a'))  :: Can have blank lines in a list item
+                      (star newline)  :: Can have blank lines in a list item
                     ==
                   ++  block-quote-marker
                     ;~  plug           :: Single char '>'

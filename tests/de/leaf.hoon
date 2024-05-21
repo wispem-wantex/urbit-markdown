@@ -12,11 +12,11 @@
         !>((scan "# Asdf" heading:leaf:de:md))
       %+  expect-eq
         !>(`heading:leaf:m`[%heading %atx 4 ~[[%text 'Asdf']]])
-        !>((scan "  #### Asdf" heading:leaf:de:md))
+        !>((scan "  #### Asdf\0a" heading:leaf:de:md))
       :: With trailing crap
       %+  expect-eq
         !>(`heading:leaf:m`[%heading %atx 1 ~[[%text 'Asdf']]])
-        !>((scan "#       Asdf      " heading:leaf:de:md))
+        !>((scan "#       Asdf      \0d\0a" heading:leaf:de:md))
       %+  expect-eq
         !>(`heading:leaf:m`[%heading %atx 1 ~[[%text 'Asdf']]])
         !>((scan "#       Asdf      ####  " heading:leaf:de:md))
