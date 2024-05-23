@@ -19,6 +19,15 @@
         !>  ^-  manx  [[%$ [%$ "A quick brown fox"] ~] ~]
         !>((text:inline:sail-en:md [%text 'A quick brown fox']))
     ==
+  ++  test-inline-entity
+    ;:  weld
+      %+  expect-eq
+        !>  ^-  manx  [[%$ [%$ `tape`['&DifferentialD;' ~]] ~] ~]
+        !>((entity:inline:sail-en:md [%entity 'DifferentialD']))
+      %+  expect-eq
+        !>  ^-  manx  [[%$ [%$ `tape`['&#17;' ~]] ~] ~]
+        !>((entity:inline:sail-en:md [%entity '#17']))
+    ==
   ++  test-inline-link
     =/  ref-links=(map @t urlt:ln:m)  %-  molt  :~
       ['asdf' `urlt:ln:m`[['https://ref.link' |] ~]]

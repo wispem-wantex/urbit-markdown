@@ -15,6 +15,11 @@
     ;:  weld
       %+  expect-eq  !>("A quick brown fox")  !>((text:inline:en:md [%text 'A quick brown fox']))
     ==
+  ++  test-inline-entity
+    ;:  weld
+      %+  expect-eq  !>("&DifferentialD;")  !>((entity:inline:en:md [%entity 'DifferentialD']))
+      %+  expect-eq  !>("&#17;")  !>((entity:inline:en:md [%entity '#17']))
+    ==
   ++  test-inline-link
     ;:  weld
       :: Direct links

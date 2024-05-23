@@ -15,6 +15,12 @@
     ;:  weld
       %+  expect-eq  !>(`text:inline:m`[%text 'A quick brown fox'])  !>((scan "A quick brown fox" text:inline:de:md))
     ==
+  ++  test-entity
+    ;:  weld
+      %+  expect-eq  !>(`entity:inline:m`[%entity 'DifferentialD'])  !>((scan "&DifferentialD;" entity:inline:de:md))
+      %+  expect-eq  !>(`entity:inline:m`[%entity '#17'])  !>((scan "&#17;" entity:inline:de:md))
+    ==
+  ::
   ++  test-inline-link
     ;:  weld
       :: Backfill helper function
@@ -114,9 +120,17 @@
         !>  ^-  contents:inline:m
             :~  [%text 'The most complete and widely adopted specification is ']
                 [%link ~[[%text 'the Github spec']] [%direct [['https://github.github.com/gfm' |] ~]]]
-                [%text ', which includes several non-standard extensions of the Markdown format']
+                [%text ', which includes several non-standard extensions of the ']
+                [%entity 'middot']
+                [%text ' Markdown format']
             ==
-        !>((scan "The most complete and widely adopted specification is [the Github spec](https://github.github.com/gfm), which includes several non-standard extensions of the Markdown format" contents:inline:de:md))
+        !>((scan "The most complete and widely adopted specification is [the Github spec](https://github.github.com/gfm), which includes several non-standard extensions of the &middot; Markdown format" contents:inline:de:md))
+      %+  expect-eq
+        !>  ^-  contents:inline:m
+            :~  [%escape '&']
+                [%text 'middot;']
+            ==
+        !>((scan "\\&middot;" contents:inline:de:md))
     ==
   ::
   ++  test-emphasis-and-strong-interactions
@@ -132,4 +146,11 @@
             ==
         !>((scan "__Or the *other way* around__" contents:inline:de:md))
     ==
+  ::
+  ++  test-link-with-image-in-it
+    %+  expect-eq
+      !>  ^-  contents:inline:m  :~
+            [%link ~[[%image 'GitHub license' [%direct ['https://img.shields.io/badge/license-MIT-blue.svg' |] ~]]] [%direct ['https://github.com/facebook/react/blob/main/LICENSE' |] ~]]
+          ==
+      !>((scan "[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/facebook/react/blob/main/LICENSE)" contents:inline:de:md))
 --

@@ -162,7 +162,7 @@
         '''
         ## Milestone 1
 
-        The first milestone for this project is support for basic, old-school Markdown syntax, but not
+        The first milestone for this project is support for &middot; basic, old-school Markdown syntax, but not
         including the Github flavor's extensions.
 
         Reward: **2 stars**
@@ -175,7 +175,9 @@
         !>  ^-  markdown:m
             :~  [%leaf [%heading %atx 2 ~[[%text 'Milestone 1']]]]
                 [%leaf [%blank-line ~]]
-                :+  %leaf  %paragraph   :~  [%text 'The first milestone for this project is support for basic, old-school Markdown syntax, but not']
+                :+  %leaf  %paragraph   :~  [%text 'The first milestone for this project is support for ']
+                                            [%entity 'middot']
+                                            [%text ' basic, old-school Markdown syntax, but not']
                                             [%soft-line-break ~]
                                             [%text 'including the Github flavor\'s extensions.']
                                             [%soft-line-break ~]

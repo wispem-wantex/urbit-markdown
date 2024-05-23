@@ -132,6 +132,7 @@
                 %+  cook  |=(a=element:inline:m a)
                 ;~  pose
                   escape
+                  entity
                   strong
                   emphasis
                   code
@@ -151,6 +152,7 @@
                 %-  plus                                   :: At least one character
                 ;~  less                                   :: ...which doesn't match any other inline rule
                   escape
+                  entity
                   link
                   image
                   autolink
@@ -170,8 +172,19 @@
                   ::  \!\"\#\$\%\&\'\(\)\*\+\,\-\.\/\:\;\<\=\>\?\@\[\\\]\^\_\`\{\|\}\~
                   (escaped '[')  (escaped ']')  (escaped '(')  (escaped ')')
                   (escaped '!')  (escaped '*')  (escaped '*')  (escaped '_')
+                  (escaped '&')  (escaped '\\')
                   :: etc
                 ==
+              ++  entity
+                %+  cook  |=(a=entity:inline:m a)
+                %+  stag  %entity
+                %+  ifix  [pam mic]
+                %+  cook  crip
+                ;~  pose
+                  ;~(plug hax (stun [1 7] nud))            :: '#' and one to seven digits
+                  (plus alf)                               :: Named entity
+                ==
+              ::
               ++  softbrk                                  :: Newline
                 %+  cook  |=(a=softbrk:inline:m a)
                 %+  stag  %soft-line-break
@@ -193,9 +206,11 @@
                   %+  ifix  [sel ser]                      :: Display text is wrapped in '[...]'
                     %-  star  ;~  pose                     :: Display text can contain various contents
                       escape
+                      entity
                       emphasis
                       strong
                       code
+                      image
                       :: Text: =>
                       %+  knee  *text:inline:m  |.  ~+   :: recurse
                       %+  cook  |=(a=text:inline:m a)
@@ -204,6 +219,7 @@
                       %-  plus                                   :: At least one character
                       ;~  less                                   :: ...which doesn't match any other inline rule
                         escape
+                        entity
                         emphasis
                         strong
                         code
@@ -246,6 +262,7 @@
                       (easy '*')
                       %-  plus  ;~  pose                   :: Display text can contain various contents
                         escape
+                        entity
                         strong
                         link
                         autolink
@@ -261,6 +278,7 @@
                         %-  plus                           :: At least one character
                         ;~  less                           :: ...which doesn't match any other inline rule
                           escape
+                          entity
                           strong
                           link
                           autolink
@@ -281,6 +299,7 @@
                       (easy '_')
                       %-  plus  ;~  pose                   :: Display text can contain various contents
                         escape
+                        entity
                         strong
                         link
                         autolink
@@ -296,6 +315,7 @@
                         %-  plus                           :: At least one character
                         ;~  less                           :: ...which doesn't match any other inline rule
                           escape
+                          entity
                           strong
                           link
                           autolink
@@ -894,6 +914,7 @@
                   %text  (text e)
                   %link  (link e)
                   %escape  (escape e)
+                  %entity  (entity e)
                   %code-span  (code e)
                   %strong  (strong e)
                   %emphasis  (emphasis e)
@@ -907,6 +928,11 @@
                 |=  [t=text:inline:m]
                 ^-  tape
                 (trip text.t)                                     :: So easy!
+              ::
+              ++  entity
+                |=  [e=entity:inline:m]
+                ^-  tape
+                ;:(weld "&" (trip code.e) ";")
               ::
               ++  link
                 |=  [l=link:inline:m]
@@ -1184,6 +1210,7 @@
               %link  (link e)
               %code-span  (code e)
               %escape  (escape e)
+              %entity  (entity e)
               %strong  (strong e)
               %emphasis  (emphasis e)
               %soft-line-break  (softbrk e)
@@ -1200,6 +1227,11 @@
             |=  [e=escape:inline:m]
             ^-  manx
             [[%$ [%$ (trip char.e)] ~] ~]  :: Magic; look up the structure of a `manx` if you want
+          ++  entity
+            |=  [e=entity:inline:m]
+            ^-  manx
+            =/  fulltext  (crip ;:(weld "&" (trip code.e) ";"))
+            [[%$ [%$ `tape`[fulltext ~]] ~] ~]             :: We do a little sneaky
           ++  softbrk
             |=  [s=softbrk:inline:m]
             ^-  manx

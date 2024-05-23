@@ -59,7 +59,7 @@
       +$  escape    [%escape char=@t]
       ::
       ::  HTML-entity
-      +$  entity    [%entity char=@t]
+      +$  entity    [%entity code=@t]
       ::
       ::  Code span (inline code).  Interpreted literally, cannot have nested elements.
       ::  Can be enclosed by any amount of backticks on each side, >= 1.  Must be balanced.
