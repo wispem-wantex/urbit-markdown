@@ -21,7 +21,45 @@
             ==
         ==
       ::
-      ++  whitespace  (mask " \09\0d\0a")                 ::  whitespace: space, tab, or newline
+      ++  whitespace  (mask " \09\0d\0a")                  ::  whitespace: space, tab, or newline
+      ::
+      ++  all-link-ref-definitions                         :: Recursively get link ref definitions
+        =<  process-nodes
+        |%
+          ++  process-nodes
+            |=  [nodes=markdown:m]
+            ^-  (map @t urlt:ln:m)
+            ?~  nodes  ~
+            %-  %~(uni by (process-node (head nodes)))
+            $(nodes +.nodes)
+          ::
+          ++  process-nodeses
+            |=  [nodeses=(list markdown:m)]
+            ^-  (map @t urlt:ln:m)
+            ?~  nodeses  ~
+            %-  %~(uni by (process-nodes (head nodeses)))
+            $(nodeses +.nodeses)
+          ::
+          ++  process-node
+            |=  [node=node:markdown:m]
+            ^-  (map @t urlt:ln:m)
+            =/  result  *(map @t urlt:ln:m)
+            ?-  -.node
+              %leaf                                        :: Leaf node: check if it's a link ref def
+                =/  leaf=node:leaf:m  +.node
+                ?+  -.leaf  result
+                  %link-ref-definition    (~(put by result) label.leaf urlt.leaf)
+                ==
+              ::
+              %container
+                =/  container=node:container:m  +.node
+                ?-  -.container
+                  %block-quote            (process-nodes markdown.container)
+                  %ol                     (process-nodeses contents.container)
+                  %ul                     (process-nodeses contents.container)
+                ==
+            ==
+        --
     --
 |%
   ::
