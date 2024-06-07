@@ -45,15 +45,15 @@
       :: Reference link (full)
       %+  expect-eq
         !>  ^-  manx  ;a(href "https://another.link", title "Sample"): asdf
-        !>((~(link inline:sail-en:md ref-links) [%link ~[[%text 'asdf']] [%ref %full 'jkl']]))
+        !>((link:~(inline sail-en ref-links) [%link ~[[%text 'asdf']] [%ref %full 'jkl']]))
       :: Reference link (collapsed)
       %+  expect-eq
         !>  ^-  manx  ;a(href "https://ref.link", title ""): asdf
-        !>((~(link inline:sail-en:md ref-links) [%link ~[[%text 'asdf']] [%ref %collapsed 'asdf']]))
+        !>((link:~(inline sail-en ref-links) [%link ~[[%text 'asdf']] [%ref %collapsed 'asdf']]))
       :: Reference link (shortcut)
       %+  expect-eq
         !>  ^-  manx  ;a(href "https://ref.link", title ""): asdf
-        !>((~(link inline:sail-en:md ref-links) [%link ~[[%text 'asdf']] [%ref %shortcut 'asdf']]))
+        !>((link:~(inline sail-en ref-links) [%link ~[[%text 'asdf']] [%ref %shortcut 'asdf']]))
     ==
   ::
   ++  test-inline-image

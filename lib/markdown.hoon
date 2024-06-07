@@ -1233,9 +1233,17 @@
   ::
   ::  Enserialize as Sail (manx and marl)
   ++  sail-en
-    |%
+    =<
+        |=  [document=markdown:m]
+        =/  link-ref-defs  (all-link-ref-definitions document)
+        ^-  manx
+        ;div
+          ;*  (~(markdown sail-en link-ref-defs) document)
+        ==
+    ::
+    |_  [reference-links=(map @t urlt:ln:m)]
       ++  inline
-        |_  [reference-links=(map @t urlt:ln:m)]
+        |%
           ++  contents
             |=  [=contents:inline:m]
             ^-  marl
@@ -1287,8 +1295,10 @@
             ^-  manx
             =/  target  target.l
             =/  urlt  ?-  -.target
-                          %direct  urlt.target                                 :: Direct link; use it
-                          %ref     (~(got by reference-links) label.target)    :: Ref link; look it up
+                          %direct  urlt.target                          :: Direct link; use it
+                          %ref                                          :: Ref link; look it up
+                            ~|  "reflink not found: {<label.target>}"
+                            (~(got by reference-links) label.target)
                       ==
             ;a(href (trip text.url.urlt), title (trip (fall title-text.urlt '')))
               ;*  (contents contents.l)
@@ -1298,8 +1308,10 @@
             ^-  manx
             =/  target  target.i
             =/  urlt  ?-  -.target
-                          %direct  urlt.target                                 :: Direct link; use it
-                          %ref     (~(got by reference-links) label.target)    :: Ref link; look it up
+                          %direct  urlt.target                          :: Direct link; use it
+                          %ref                                          :: Ref link; look it up
+                            ~|  "reflink not found: {<label.target>}"
+                            (~(got by reference-links) label.target)
                       ==
             ;img(src (trip text.url.urlt), alt (trip alt-text.i));
           ++  autolink
@@ -1320,7 +1332,7 @@
             ==
         --
       ++  leaf
-        |_  [reference-links=(map @t urlt:ln:m)]
+        |%
           ++  node
             |=  [n=node:leaf:m]
             ^-  manx
@@ -1346,7 +1358,7 @@
                         %5  %h5
                         %6  %h6
                       ==
-            (~(contents inline reference-links) contents.h)
+            (contents:inline contents.h)
           ++  blank-line
             |=  [b=blank-line:leaf:m]
             ^-  manx
@@ -1373,12 +1385,12 @@
             |=  [p=paragraph:leaf:m]
             ^-  manx
             ;p
-              ;*  (~(contents inline reference-links) contents.p)
+              ;*  (contents:inline contents.p)
             ==
         --
       ::
       ++  container
-        |_  [reference-links=(map @t urlt:ln:m)]
+        |%
           ++  node
             |=  [n=node:container:m]
             ^-  manx
@@ -1419,7 +1431,6 @@
         --
       ::
       ++  markdown
-        =|  reference-links=(map @t urlt:ln:m)
         |=  [a=markdown:m]
         ^-  marl
         %+  turn  a   |=  [item=node:markdown:m]
@@ -1427,13 +1438,5 @@
                         %leaf  (node:leaf +.item)
                         %container  (node:container +.item)
                       ==
-      ::
-      ++  document
-        |=  [d=markdown:m]
-        ;html
-          ;body
-            ;*  (markdown d)
-          ==
-        ==
     --
 --
