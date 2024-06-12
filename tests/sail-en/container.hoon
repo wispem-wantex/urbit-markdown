@@ -54,6 +54,18 @@
               ==
     ==
   ::
+  ++  test-task-list
+    ;:  weld
+       %+  expect-eq
+        !>  "<ul class=\"task-list\"><li><input type=\"checkbox\" checked=\"true\"></input><p>a b </p></li><li><input type=\"checkbox\"></input><p>c </p></li><li><input type=\"checkbox\" checked=\"true\"></input><p>d </p></li></ul>"
+        !>  %-  en-xml:html  %-  tl:container:sail-en:md
+          :*  %tl  0  '-'  :~
+            :-  %.y  ~[[%leaf %paragraph ~[[%text 'a'] [%soft-line-break ~] [%text 'b'] [%soft-line-break ~]]]]
+            :-  %.n  ~[[%leaf %paragraph ~[[%text 'c'] [%soft-line-break ~]]]]
+            :-  %.y  ~[[%leaf %paragraph ~[[%text 'd'] [%soft-line-break ~]]]]
+          ==  ==
+    ==
+  ::
   ++  test-unordered-list
     ;:  weld
       %+  expect-eq

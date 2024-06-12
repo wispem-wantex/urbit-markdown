@@ -57,6 +57,7 @@
                   %block-quote            (process-nodes markdown.container)
                   %ol                     (process-nodeses contents.container)
                   %ul                     (process-nodeses contents.container)
+                  %tl                     (process-nodeses (turn contents.container |=([is-checked=? =markdown:m] markdown)))
                 ==
             ==
         --
@@ -829,6 +830,7 @@
                 %+  cook  |=(a=node:container:m a)
                 ;~  pose
                   block-quote
+                  tl
                   ul
                   ol
                 ==
@@ -1205,6 +1207,7 @@
                   %block-quote  (block-quote n)
                   %ul           (ul n)
                   %ol           (ol n)
+                  %tl           (tl n)
                 ==
               ::
               ++  block-quote
@@ -1244,11 +1247,41 @@
                       line  :: first line
                     %-  star
                       %+  cook  |=  [a=tape]               :: Subsequent lines just get indent
+                                ?:  ?|(=("" a) =("\0a" a))  a
+                                ;:  weld
+                                  (reap indent-level.u ' ')
+                                  "  "  :: 2 spaces, to make it even with the 1st line
+                                  a
+                                ==
+                        line  :: second and thereafter lines
+                  ==
+              ++  tl
+                |=  [t=tl:container:m]
+                ^-  tape
+                %-  zing  %+  turn  contents.t             :: Each bullet point...
+                  |=  [is-checked=? item=markdown:m]
+                  ^-  tape
+                  %+  scan  (markdown item)                   :: First, render bullet point contents
+                  %+  cook  zing
+                  ;~  plug
+                    %+  cook  |=  [a=tape]                 :: Prepend 1st line with indent, bullet char, checkbox
                               ;:  weld
-                                (reap indent-level.u ' ')
-                                "  "  :: 2 spaces, to make it even with the 1st line
+                                (reap indent-level.t ' ')
+                                (trip marker-char.t)
+                                " ["
+                                ?:(is-checked "x" " ")
+                                "] "
                                 a
                               ==
+                      line  :: first line
+                    %-  star
+                      %+  cook  |=  [a=tape]               :: Subsequent lines just get indent
+                                ?:  ?|(=("" a) =("\0a" a))  a
+                                ;:  weld
+                                  (reap indent-level.t ' ')
+                                  "  "  :: 2 spaces, to make it even with the 1st line
+                                  a
+                                ==
                         line  :: second and thereafter lines
                   ==
               ::
@@ -1272,12 +1305,13 @@
                       line  :: first line
                     %-  star
                       %+  cook  |=  [a=tape]               :: Subsequent lines just get indent
-                              ;:  weld
-                                (reap indent-level.o ' ')
-                                (reap (lent (a-co:co start-num.o)) ' ')
-                                "  "  :: 2 spaces, to make it even with the 1st line
-                                a
-                              ==
+                                ?:  ?|(=("" a) =("\0a" a))  a
+                                ;:  weld
+                                  (reap indent-level.o ' ')
+                                  (reap (lent (a-co:co start-num.o)) ' ')
+                                  "  "  :: 2 spaces, to make it even with the 1st line
+                                  a
+                                ==
                         line  :: second and thereafter lines
                   ==
             --
@@ -1460,6 +1494,7 @@
               %block-quote  (block-quote n)
               %ul           (ul n)
               %ol           (ol n)
+              %tl           (tl n)
             ==
           ::
           ++  block-quote
@@ -1487,6 +1522,19 @@
               ;*  %+  turn  contents.o  |=  [a=markdown:m]
                                         ^-  manx
                                         ;li
+                                          ;*  (~(. markdown reference-links) a)
+                                        ==
+            ==
+          ++  tl
+            |=  [t=tl:container:m]
+            ^-  manx
+            ;ul.task-list
+              ;*  %+  turn  contents.t  |=  [is-checked=? a=markdown:m]
+                                        ^-  manx
+                                        ;li
+                                          ;+  ?:  is-checked
+                                                ;input(type "checkbox", checked "true");
+                                              ;input(type "checkbox");
                                           ;*  (~(. markdown reference-links) a)
                                         ==
             ==

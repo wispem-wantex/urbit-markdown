@@ -57,20 +57,37 @@
       ::
       =/  a
         '''
-        ## Milestone 1
+        ### Milestone 1
 
         The first milestone for this project is support for basic, old-school Markdown syntax, but not
         including the Github flavor's extensions.
 
         Reward: **2 stars**
 
-        ## Milestone 2
+        ### Milestone 2
 
-        TBD, based on any potential challenges encountered in Milestone 1.
+        This milestone adds support for the Github-flavored markdown extensions, namely:
+
+        - [ ] reference links
+        - [x] task list items
+        - [ ] tables
+        - [ ] strikethrough formatting
+        - [ ] extended autolink
+        - [ ] embedded HTML
+
+        Additionally, it includes:
+
+          - comprehensive edge-case testing
+
+          - documentation of how to use the library in an app
+
+          - an example app showing how the library can be used, with a front-end
+
+        Yep.
         '''
       %+  expect-eq
         !>  ^-  markdown:m
-            :~  [%leaf [%heading %atx 2 ~[[%text 'Milestone 1']]]]
+            :~  [%leaf [%heading %atx 3 ~[[%text 'Milestone 1']]]]
                 [%leaf [%blank-line ~]]
                 :+  %leaf  %paragraph   :~  [%text 'The first milestone for this project is support for basic, old-school Markdown syntax, but not']
                                             [%soft-line-break ~]
@@ -83,9 +100,32 @@
                                             [%soft-line-break ~]
                                         ==
                 [%leaf [%blank-line ~]]
-                [%leaf [%heading %atx 2 ~[[%text 'Milestone 2']]]]
+                [%leaf [%heading %atx 3 ~[[%text 'Milestone 2']]]]
                 [%leaf [%blank-line ~]]
-                :+  %leaf  %paragraph  ~[[%text 'TBD, based on any potential challenges encountered in Milestone 1.'] [%soft-line-break ~]]
+                :+  %leaf  %paragraph  ~[[%text 'This milestone adds support for the Github-flavored markdown extensions, namely:'] [%soft-line-break ~]]
+                [%leaf [%blank-line ~]]
+                :-  %container  :*  %tl  0  '-'  :~
+                  :-  %.n  ~[[%leaf %paragraph ~[[%text 'reference links'] [%soft-line-break ~]]]]
+                  :-  %.y  ~[[%leaf %paragraph ~[[%text 'task list items'] [%soft-line-break ~]]]]
+                  :-  %.n  ~[[%leaf %paragraph ~[[%text 'tables'] [%soft-line-break ~]]]]
+                  :-  %.n  ~[[%leaf %paragraph ~[[%text 'strikethrough formatting'] [%soft-line-break ~]]]]
+                  :-  %.n  ~[[%leaf %paragraph ~[[%text 'extended autolink'] [%soft-line-break ~]]]]
+                  :-  %.n  ~[[%leaf %paragraph ~[[%text 'embedded HTML'] [%soft-line-break ~]]] [%leaf [%blank-line ~]]]
+                ==  ==
+                :+  %leaf  %paragraph  ~[[%text 'Additionally, it includes:'] [%soft-line-break ~]]
+                [%leaf [%blank-line ~]]
+                ^-  node:markdown:m  :-  %container  :*  %ul  2  '-'  :~
+                  :~  [%leaf %paragraph ~[[%text 'comprehensive edge-case testing'] [%soft-line-break ~]]]
+                      [%leaf [%blank-line ~]]
+                  ==
+                  :~  [%leaf %paragraph ~[[%text 'documentation of how to use the library in an app'] [%soft-line-break ~]]]
+                      [%leaf [%blank-line ~]]
+                  ==
+                  :~  [%leaf %paragraph ~[[%text 'an example app showing how the library can be used, with a front-end'] [%soft-line-break ~]]]
+                      [%leaf [%blank-line ~]]
+                  ==
+                ==  ==
+                :+  %leaf  %paragraph  ~[[%text 'Yep.'] [%soft-line-break ~]]
             ==
         !>((rash a markdown:de:md))
       ::
@@ -133,9 +173,23 @@
 
         ## Milestone 2
 
-        TBD, based on any potential challenges encountered in Milestone 1.
+        This milestone adds support for the Github-flavored markdown extensions, namely:
+
+          - [ ] reference links
+          - [x] task list items
+          - [ ] tables
+          - [ ] strikethrough formatting
+          - [ ] extended autolink
+          - [ ] embedded HTML
+
+        Additionally, it includes:
+
+        - comprehensive edge-case testing
+        - documentation of how to use the library in an app
+        - an example app showing how the library can be used, with a front-end
+
         '''
       =/  rslt  (rash a markdown:de:md)
-      %+  expect-eq  !>(1)  !>(1)
+      %+  expect-eq  !>(a)  !>((crip (markdown:en:md (rash a markdown:de:md))))
     ==
 --

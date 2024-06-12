@@ -132,7 +132,7 @@
     |%
       ++  node  $+  container-node
                 $@  ~
-                $%(block-quote ol ul)
+                $%(block-quote ol ul tl)
       ::
       ::  Block quote.  Can be nested.
       +$  block-quote  [%block-quote =markdown]
