@@ -254,4 +254,86 @@
           ==  ==
         !>((scan "   999999999. a\0a              b\0a              \0a   0. c\0a1000000000000. d" ol:container:de:md))
     ==
+  ::
+  ::  Task lists
+  ::  ----------
+  ::
+  ++  test-tl-checkbox
+    ;:  weld
+      %+  expect-eq  !>(%.y)  !>((scan "[x]" tl-checkbox:container:de:md))
+      %+  expect-eq  !>(%.n)  !>((scan "[ ]" tl-checkbox:container:de:md))
+    ==
+  ::
+  ++  test-task-list-item
+    ;:  weld
+      %+  expect-eq
+        !>(`tl-item-t:container:de:md`['-' 0 %.n ~[[%leaf %paragraph ~[[%text 'asdf'] [%soft-line-break ~] [%text 'jkl;'] [%soft-line-break ~]]]]])
+        !>((scan "- [ ] asdf\0a  jkl;" tl-item:container:de:md))
+      :: With only 1 line
+      %+  expect-eq
+        !>(`tl-item-t:container:de:md`['-' 0 %.y ~[[%leaf %paragraph ~[[%text 'asdf'] [%soft-line-break ~]]]]])
+        !>((scan "- [x] asdf" tl-item:container:de:md))
+      :: With hanging indent
+      %+  expect-eq
+        !>(`tl-item-t:container:de:md`['-' 0 %.n ~[[%leaf %paragraph ~[[%text 'asdf'] [%soft-line-break ~] [%text '  jkl;'] [%soft-line-break ~]]]]])
+        !>((scan "- [ ] asdf\0a    jkl;" tl-item:container:de:md))
+      :: With leading indent
+      %+  expect-eq
+        !>(`tl-item-t:container:de:md`['+' 3 %.y ~[[%leaf %paragraph ~[[%text 'asdf'] [%soft-line-break ~] [%text 'jkl;'] [%soft-line-break ~]]]]])
+        !>((scan "   + [x] asdf\0a     jkl;" tl-item:container:de:md))
+    ==
+  ::
+  ++  test-task-list
+    ;:  weld
+      %+  expect-eq
+        !>  ^-  tl:container:m
+          :*  %tl  0  '-'  :~
+            :-  %.y  ~[[%leaf %paragraph ~[[%text 'a'] [%soft-line-break ~] [%text 'b'] [%soft-line-break ~]]]]
+            :-  %.n  ~[[%leaf %paragraph ~[[%text 'c'] [%soft-line-break ~]]]]
+            :-  %.y  ~[[%leaf %paragraph ~[[%text 'd'] [%soft-line-break ~]]]]
+          ==  ==
+        !>((scan "- [x] a\0a  b\0a- [ ] c\0a- [x] d" tl:container:de:md))
+      :: With blank lines in a list item
+      %+  expect-eq
+        !>  ^-  tl:container:m
+          :*  %tl  2  '*'  :~
+            :-  %.n  :~  [%leaf %paragraph ~[[%text 'a'] [%soft-line-break ~]]]
+                [%leaf %blank-line ~]
+                [%leaf %paragraph ~[[%text 'b'] [%soft-line-break ~]]]
+            ==
+            :-  %.n  ~[[%leaf %paragraph ~[[%text 'c'] [%soft-line-break ~]]]]
+            :-  %.n  ~[[%leaf %paragraph ~[[%text 'd'] [%soft-line-break ~]]]]
+          ==  ==
+        !>((scan "  * [ ] a\0a\0a    b\0a  * [ ] c\0a  * [ ] d" tl:container:de:md))
+      :: With blank lines in a list item, and they have spaces
+      %+  expect-eq
+        !>  ^-  tl:container:m
+          :*  %tl  0  '+'  :~
+            :-  %.y  :~  [%leaf %paragraph ~[[%text 'a'] [%soft-line-break ~]]]
+                [%leaf %blank-line ~]
+                [%leaf %paragraph ~[[%text 'b'] [%soft-line-break ~]]]
+            ==
+            :-  %.y  ~[[%leaf %paragraph ~[[%text 'c'] [%soft-line-break ~]]]]
+            :-  %.y  ~[[%leaf %paragraph ~[[%text 'd'] [%soft-line-break ~]]]]
+          ==  ==
+        !>((scan "+   [x] a\0a    \0a    b\0a+   [x] c\0a+   [x] d" tl:container:de:md))
+      :: With blank lines between list items
+      %+  expect-eq
+        !>  ^-  tl:container:m
+          :*  %tl  0  '-'  :~
+            :-  %.y  ~[[%leaf %paragraph ~[[%text 'a'] [%soft-line-break ~] [%text 'b'] [%soft-line-break ~]]] [%leaf %blank-line ~]]
+            :-  %.n  ~[[%leaf %paragraph ~[[%text 'c'] [%soft-line-break ~]]]]
+            :-  %.n  ~[[%leaf %paragraph ~[[%text 'd'] [%soft-line-break ~]]]]
+          ==  ==
+        !>((scan "- [x] a\0a  b\0a\0a- [ ] c\0a- [ ] d" tl:container:de:md))
+      :: With blank lines with spaces between list items
+      %+  expect-eq
+        !>  ^-  tl:container:m
+          :*  %tl  0  '-'  :~
+            :-  %.n  ~[[%leaf %paragraph ~[[%text 'a'] [%soft-line-break ~] [%text 'b'] [%soft-line-break ~]]] [%leaf %blank-line ~]]
+            :-  %.y  ~[[%leaf %paragraph ~[[%text 'c'] [%soft-line-break ~]]]]
+            :-  %.n  ~[[%leaf %paragraph ~[[%text 'd'] [%soft-line-break ~]]]]
+          ==  ==
+        !>((scan "- [ ] a\0a  b\0a  \0a- [x] c\0a- [ ] d" tl:container:de:md))
+    ==
 --

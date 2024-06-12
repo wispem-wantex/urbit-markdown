@@ -786,6 +786,43 @@
                         line                               :: the line
                       ==
                     ==
+                  ::
+                  ++  tl-checkbox
+                    ;~  pose
+                      %+  cold  %.y  (jest '[x]')
+                      %+  cold  %.n  (jest '[ ]')
+                    ==
+                  ::
+                  ::  Produces a 4-tuple:
+                  ::  - bullet char (*, +, or -)
+                  ::  - indent level (number of spaces before the bullet)
+                  ::  - is-checked
+                  ::  - item contents (markdown)
+                  +$  tl-item-t  [char=@t indent=@ is-checked=? =markdown:m]
+                  ++  tl-item
+                    |*  =nail
+                    :: Get the marker and indent size
+                    =/  vex  (;~(plug ul-marker ;~(sfix tl-checkbox ace)) nail)
+                    ?~  q.vex  vex  :: If no match found, fail
+                    =/  [mrkr=ul-marker-t is-checked=?]  p:(need q.vex)
+                    :: Read the rest of the list item block
+                    %.
+                      q:(need q.vex)
+                    %+  cook
+                      |=  [a=(list tape)]
+                      ^-  tl-item-t
+                      :*  char.mrkr
+                          indent.mrkr
+                          is-checked
+                          (scan (zing a) markdown)
+                      ==
+                    ;~  plug
+                      line                                 :: First line
+                      %-  star  ;~  pfix                   :: Subsequent lines must have the same indent
+                        (stun [len.mrkr len.mrkr] ace)     :: the indent
+                        line                               :: the line
+                      ==
+                    ==
                 --
             |%
               ++  node
@@ -871,6 +908,31 @@
                         ~
                       `markdown.item
                     ol-item
+                ==
+              ::
+              ++  tl
+                |*  =nail
+                :: Start by finding the type of the first bullet (indent level and bullet char)
+                =/  vex  (tl-item nail)
+                ?~  q.vex  vex  :: Fail if it doesn't match a list item
+                =/  first-item=tl-item-t  p:(need q.vex)
+                :: Check for more list items
+                %.
+                  q:(need q.vex)
+                %+  cook  |=(a=tl:container:m a)
+                %+  stag  %tl
+                ;~  plug                                     :: Give the first item, first
+                  (easy indent.first-item)
+                  (easy char.first-item)
+                  (easy [is-checked.first-item markdown.first-item])
+                  %-  star
+                    %+  sear                                 :: Reject items that don't have the same bullet char
+                      |=  [item=tl-item-t]
+                      ^-  (unit [is-checked=? markdown:m])
+                      ?.  =(char.item char.first-item)
+                        ~
+                      `[is-checked.item markdown.item]
+                    tl-item
                 ==
             --
           ::

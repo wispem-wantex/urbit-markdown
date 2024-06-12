@@ -146,5 +146,9 @@
       ::  Marker char can be either hep (-), lus (+) or tar (*)
       ::  Can be indented up to 3 spaces
       +$  ul  [%ul indent-level=@ marker-char=@t contents=(list markdown)] :: is-tight=?
+      ::
+      ::  Task list: unordered list of tasks
+      ::  Can be indented up to 3 spaces
+      +$  tl  [%tl indent-level=@ marker-char=@t contents=(list [is-checked=? =markdown])] :: is-tight=?
     --
 --
