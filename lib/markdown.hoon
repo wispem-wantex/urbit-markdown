@@ -684,7 +684,6 @@
                               (star ;~(less newline ;~(plug (star ace) bar) prn))
                               (cook lent ;~(sfix (star ace) bar))
                             ==
-                            ::%+  ifix  [(star ace) ;~(plug (star ace) bar)]    :: ...bars as terminators
                         ==
                       ++  delimiter-row
                         ;~  pfix  bar                                 :: A bar in front...
@@ -694,24 +693,15 @@
                               :-  ;:(add pfx ?:(ral 1 0) heps ?:(lal 1 0) sfx)
                               ?:(ral ?:(lal %c %r) ?:(lal %l %n))
                             ;~  plug
-                              (cook lent (star ace))
-                              (cook |=(a=tape .?(a)) (stun [0 1] col))
-                              (cook lent (plus hep))
-                              (cook |=(a=tape .?(a)) (stun [0 1] col))
-                              (cook lent ;~(sfix (star ace) bar))
+                              (cook lent (star ace))                          :: Delimiter: leading space...
+                              (cook |=(a=tape .?(a)) (stun [0 1] col))        :: maybe a ':'...
+                              (cook lent (plus hep))                          :: a bunch of '-'...
+                              (cook |=(a=tape .?(a)) (stun [0 1] col))        :: maybe another ':'...
+                              (cook lent ;~(sfix (star ace) bar))             :: ..and a bar as a terminator
                             ==
-                            ::%+  ifix  [(star ace) ;~(plug (star ace) bar)]    :: ...bars as terminators
-                            ::;~  pose
-                            ::  (cook |=(a=tape [(add 2 (lent a)) %c]) %+(ifix [col col] (plus hep)))  :: center-aligned
-                            ::  (cook |=(a=tape [+((lent a)) %r]) ;~(sfix (plus hep) col))  :: center-aligned
-                            ::  (cook |=(a=tape [+((lent a)) %l]) ;~(pfix col (plus hep)))  :: center-aligned
-                            ::  (cook |=(a=tape [(lent a) %n]) (plus hep))  :: center-aligned
-                            ::  ::(cook |=(a) %r ;~(plug (plus hep) col))  :: right-aligned
-                            ::  ::(cold %l ;~(plug col (plus hep)))  :: left-aligned
-                            ::  ::(cold %n (plus hep))  :: no alignment
                         ==
                     --
-                |*  =nail
+                |*  =nail :: Make it a (redundant) gate so I can use `=>` to add a helper core
                 %.  nail  :: apply the following parser
                 %+  cook
                   |=  [hdr=(list cell-t) del=(list [len=@ al=?(%c %r %l %n)]) bdy=(list (list cell-t))]
