@@ -98,7 +98,7 @@
     |%
       ++  node  $+  leaf-node
                 $@  ~
-                $%(heading break codeblk-indent codeblk-fenced html link-ref-def paragraph blank-line)
+                $%(heading break codeblk-indent codeblk-fenced html link-ref-def table paragraph blank-line)
       ::
       ::  Heading, either setext or ATX style
       +$  heading         [%heading style=?(%setext %atx) level=@ =contents:inline]
@@ -125,6 +125,9 @@
       ::
       ::  Blank lines (not rendered, but lets user control aethetic layout of the source code)
       +$  blank-line      [%blank-line ~]
+      ::
+      ::  Table (alignments: [l]eft, [r]ight, [c]enter, [n]one)
+      +$  table           [%table widths=(list @) head=(list contents:inline) align=(list ?(%l %c %r %n)) rows=(list (list contents:inline))]
     --
   ::
   ::  Container node: can contain other nodes (either container or leaf).

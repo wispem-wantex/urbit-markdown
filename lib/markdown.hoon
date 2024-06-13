@@ -492,6 +492,7 @@
                   codeblk-fenced
                   link-ref-def
                   :: ...etc
+                  table
                   paragraph
                 ==
               ++  blank-line
@@ -668,6 +669,80 @@
                       line-end
                     ==
                   ==
+              ::
+              ++  table
+                =>  |%
+                      +$  cell-t  [len=@ =contents:inline:m]
+                      ++  row
+                        ;~  pfix  bar                                 :: A bar in front...
+                          %-  star
+                            %+  cook                                  :: compute the length and parse inlines
+                              |=  [pfx=@ stuff=tape sfx=@]
+                              [;:(add pfx (lent stuff) sfx) (scan stuff contents:inline)]   :: inline elements...
+                            ;~  plug
+                              (cook lent (star ace))
+                              (star ;~(less newline ;~(plug (star ace) bar) prn))
+                              (cook lent ;~(sfix (star ace) bar))
+                            ==
+                            ::%+  ifix  [(star ace) ;~(plug (star ace) bar)]    :: ...bars as terminators
+                        ==
+                      ++  delimiter-row
+                        ;~  pfix  bar                                 :: A bar in front...
+                          %-  star
+                            %+  cook
+                              |=  [pfx=@ lal=? heps=@ ral=? sfx=@]
+                              :-  ;:(add pfx ?:(ral 1 0) heps ?:(lal 1 0) sfx)
+                              ?:(ral ?:(lal %c %r) ?:(lal %l %n))
+                            ;~  plug
+                              (cook lent (star ace))
+                              (cook |=(a=tape .?(a)) (stun [0 1] col))
+                              (cook lent (plus hep))
+                              (cook |=(a=tape .?(a)) (stun [0 1] col))
+                              (cook lent ;~(sfix (star ace) bar))
+                            ==
+                            ::%+  ifix  [(star ace) ;~(plug (star ace) bar)]    :: ...bars as terminators
+                            ::;~  pose
+                            ::  (cook |=(a=tape [(add 2 (lent a)) %c]) %+(ifix [col col] (plus hep)))  :: center-aligned
+                            ::  (cook |=(a=tape [+((lent a)) %r]) ;~(sfix (plus hep) col))  :: center-aligned
+                            ::  (cook |=(a=tape [+((lent a)) %l]) ;~(pfix col (plus hep)))  :: center-aligned
+                            ::  (cook |=(a=tape [(lent a) %n]) (plus hep))  :: center-aligned
+                            ::  ::(cook |=(a) %r ;~(plug (plus hep) col))  :: right-aligned
+                            ::  ::(cold %l ;~(plug col (plus hep)))  :: left-aligned
+                            ::  ::(cold %n (plus hep))  :: no alignment
+                        ==
+                    --
+                |*  =nail
+                %.  nail  :: apply the following parser
+                %+  cook
+                  |=  [hdr=(list cell-t) del=(list [len=@ al=?(%c %r %l %n)]) bdy=(list (list cell-t))]
+                  ^-  table:leaf:m
+                  =/  widths=(list @)  (turn del |=([len=@ al=*] len))
+                  =/  rows=(list (list cell-t))  (snoc bdy hdr)  :: since they're the same data type
+                  =/  computed-widths
+                    |-
+                      ?~  rows  widths
+                      %=  $
+                        rows  (tail rows)
+                        widths  =/  row=(list cell-t)  (head rows)
+                                |-
+                                  ?~  row  ~
+                                  :-  (max (head widths) len:(head row))
+                                  %=  $
+                                    widths  (tail widths)
+                                    row     (tail row)
+                                  ==
+                      ==
+                  :*  %table
+                      computed-widths
+                      (turn hdr |=(cell=cell-t contents.cell))
+                      (turn del |=([len=@ al=?(%c %r %l %n)] al))
+                      (turn bdy |=(row=(list cell-t) (turn row |=(cell=cell-t contents.cell))))
+                  ==
+                ;~  plug
+                  ;~(sfix row line-end)
+                  ;~(sfix delimiter-row line-end)
+                  (star ;~(sfix row line-end))
+                ==
             --
           ::
           ++  container
@@ -1114,6 +1189,7 @@
                   %fenced-codeblock  (codeblk-fenced n)
                   %link-ref-definition  (link-ref-def n)
                   %paragraph  (paragraph n)
+                  %table  (table n)
                   :: ...etc
                 ==
 
@@ -1183,6 +1259,65 @@
                   "]: "
                   (urlt:ln urlt.l)
                   "\0a"
+                ==
+              ::
+              ++  table
+                =>  |%
+                      ++  cell
+                        |=  [width=@ c=contents:inline:m]
+                        ^-  tape
+                        =/  contents-txt  (contents:inline c)
+                        ;:  weld
+                          " "
+                          contents-txt
+                          (reap (sub width (add 1 (lent contents-txt))) ' ')
+                          "|"
+                        ==
+                      ++  row
+                        |=  [widths=(list @) cells=(list contents:inline:m)]
+                        ^-  tape
+                        ;:  weld
+                          "|"
+                          |-
+                            ^-  tape
+                            ?~  widths  ~
+                            %+  weld
+                              (cell (head widths) (head cells))
+                            $(widths (tail widths), cells (tail cells))
+                          "\0a"
+                        ==
+                      ++  delimiter-row
+                        |=  [widths=(list @) align=(list ?(%l %c %r %n))]
+                        ^-  tape
+                        ;:  weld
+                          "|"
+                          |-
+                            ^-  tape
+                            ?~  align  ~
+                            ;:  weld
+                              " "
+                              ?-  (head align)
+                                %l  (weld ":" (reap ;:(sub (head widths) 3) '-'))
+                                %r  (weld (reap ;:(sub (head widths) 3) '-') ":")
+                                %c  ;:(weld ":" (reap ;:(sub (head widths) 4) '-') ":")
+                                %n  (reap ;:(sub (head widths) 2) '-')
+                              ==
+                              " |"
+                              $(align (tail align), widths (tail widths))
+                            ==
+                          "\0a"
+                        ==
+                    --
+                |=  [t=table:leaf:m]
+                ^-  tape
+                ;:  weld
+                  (row widths.t head.t)
+                  (delimiter-row widths.t align.t)
+                  =/  rows  rows.t
+                  |-
+                    ^-  tape
+                    ?~  rows  ~
+                    %+  weld  (row widths.t (head rows))  $(rows (tail rows))
                 ==
               ::
               ++  paragraph
@@ -1438,6 +1573,7 @@
               %heading  (heading n)
               %indent-codeblock  (codeblk-indent n)
               %fenced-codeblock  (codeblk-fenced n)
+              %table  (table n)
               %paragraph  (paragraph n)
               %link-ref-definition  (text:inline [%text ' '])  :: Link ref definitions don't render as anything
               :: ...etc
@@ -1476,6 +1612,39 @@
               ;+  ?:  =(info-string.c '')
                     ;code: {(trip text.c)}
                   ;code(class (weld "language-" (trip info-string.c))): {(trip text.c)}
+            ==
+          ++  table
+            |=  [t=table:leaf:m]
+            ^-  manx
+            ;table
+              ;thead
+                ;tr
+                  ;*  =/  hdr  head.t
+                      =/  align  align.t
+                      |-
+                        ?~  hdr  ~
+                        :-  ;th(align ?-((head align) %c "center", %r "right", %l "left", %n ""))
+                              ;*  (contents:inline (head hdr))
+                            ==
+                        $(hdr (tail hdr), align (tail align))
+
+                ==
+              ==
+              ;tbody
+                ;*  %+  turn  rows.t
+                    |=  [r=(list contents:inline:m)]
+                    ^-  manx
+                    ;tr
+                      ;*  =/  row  r
+                          =/  align  align.t
+                          |-
+                            ?~  row  ~
+                            :-  ;td(align ?-((head align) %c "center", %r "right", %l "left", %n ""))
+                                  ;*  (contents:inline (head row))
+                                ==
+                            $(row (tail row), align (tail align))
+                    ==
+              ==
             ==
           ++  paragraph
             |=  [p=paragraph:leaf:m]

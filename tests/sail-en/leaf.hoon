@@ -61,6 +61,74 @@
         !>((codeblk-fenced:leaf:sail-en:md [%fenced-codeblock '`' 3 'ruby' 2 'asdf\0ajkl;\0a']))
     ==
   ::
+  ++  test-table
+    ;:  weld
+      %+  expect-eq
+        !>  ^-  manx
+            ;table
+              ;thead
+                ;tr
+                  ;th(align ""): Left columns
+                  ;th(align "center"): Right columns
+                ==
+              ==
+              ;tbody
+                ;tr
+                  ;td(align ""): left foo
+                  ;td(align "center"): right foo
+                ==
+                ;tr
+                  ;td(align "")
+                    ;+  [[%$ [%$ "left "] ~] ~]
+                    ;a(href "some-link", title ""): bar
+                  ==
+                  ;td(align "center"): right bar
+                ==
+              ==
+            ==
+        !>  %-  table:leaf:sail-en:md
+            :*  %table
+                ~[23 15]
+                ~[~[[%text 'Left columns']] ~[[%text 'Right columns']]]
+                ~[%n %c]
+                :~  :~(~[[%text 'left foo']] ~[[%text 'right foo']])
+                    :~(~[[%text 'left '] [%link ~[[%text 'bar']] [%direct ['some-link' |] ~]]] ~[[%text 'right bar']])
+                ==
+            ==
+      %+  expect-eq
+        !>  ^-  manx
+            ;table
+              ;thead
+                ;tr
+                  ;th(align "left"): Left columns
+                  ;th(align "right"): Right columns
+                ==
+              ==
+              ;tbody
+                ;tr
+                  ;td(align "left"): left foo
+                  ;td(align "right"): right foo
+                ==
+                ;tr
+                  ;td(align "left")
+                    ;+  [[%$ [%$ "left "] ~] ~]
+                    ;a(href "some-link", title ""): bar
+                  ==
+                  ;td(align "right"): right bar
+                ==
+              ==
+            ==
+        !>  %-  table:leaf:sail-en:md
+            :*  %table
+                ~[23 15]
+                ~[~[[%text 'Left columns']] ~[[%text 'Right columns']]]
+                ~[%l %r]
+                :~  :~(~[[%text 'left foo']] ~[[%text 'right foo']])
+                    :~(~[[%text 'left '] [%link ~[[%text 'bar']] [%direct ['some-link' |] ~]]] ~[[%text 'right bar']])
+                ==
+            ==
+    ==
+  ::
   ++  test-paragraph
     ;:  weld
       %+  expect-eq

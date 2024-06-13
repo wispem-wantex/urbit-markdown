@@ -189,7 +189,6 @@
         - an example app showing how the library can be used, with a front-end
 
         '''
-      =/  rslt  (rash a markdown:de:md)
       %+  expect-eq  !>(a)  !>((crip (markdown:en:md (rash a markdown:de:md))))
     ==
 --

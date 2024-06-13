@@ -107,6 +107,41 @@
         !>((scan "[foo]:\0a/url" link-ref-def:leaf:de:md))
     ==
   ::
+  ++  test-table
+    ;:  weld
+      :: Test a row
+      %+  expect-eq
+        !>  ^-  (list [len=@ =contents:inline:m])
+            :~  :-  18  ~[[%text 'a '] [%strong '*' ~[[%text 'heading']]]]
+                :-  6   ~[[%text 'b']]
+                :-  2   ~[[%text 'c']]
+            ==
+        !>((scan "|   a **heading**  |   b  | c|" row:table:leaf:de:md))
+      :: Test delimiter row
+      %+  expect-eq
+        !>(`(list [len=@ align=?(%n %l %c %r)])`~[[8 %l] [3 %r] [11 %c] [3 %n]])
+        !>((scan "|  :---  | -:|:-----:    |---|" delimiter-row:table:leaf:de:md))
+      %+  expect-eq
+        !>  ^-  table:leaf:m
+            :*  %table
+                ~[23 15]
+                ~[~[[%text 'Left columns']] ~[[%text 'Right columns']]]
+                ~[%n %c]
+                :~  :~(~[[%text 'left foo']] ~[[%text 'right foo']])
+                    :~(~[[%text 'left '] [%link ~[[%text 'bar']] [%direct ['some-link' |] ~]]] ~[[%text 'right bar']])
+                ==
+            ==
+        !>
+        =/  a
+          '''
+          | Left columns   | Right columns |
+          | -------------  |:-------------:|
+          | left foo       | right foo     |
+          | left [bar](some-link) | right bar     |
+          '''
+        (rash a table:leaf:de:md)
+    ==
+  ::
   ++  test-paragraph
     ;:  weld
       %+  expect-eq

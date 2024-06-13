@@ -76,6 +76,46 @@
         !>((link-ref-def:leaf:en:md [%link-ref-definition 'foo' [['/url' |] `'title']]))
     ==
   ::
+  ++  test-table
+    ;:  weld
+      %+  expect-eq
+        !>  %-  trip
+          '''
+          | Left columns          | Right columns |
+          | --------------------- | :-----------: |
+          | left foo              | right foo     |
+          | left [bar](some-link) | right bar     |
+
+          '''
+        !>  %-  table:leaf:en:md
+            :*  %table
+                ~[23 15]
+                ~[~[[%text 'Left columns']] ~[[%text 'Right columns']]]
+                ~[%n %c]
+                :~  :~(~[[%text 'left foo']] ~[[%text 'right foo']])
+                    :~(~[[%text 'left '] [%link ~[[%text 'bar']] [%direct ['some-link' |] ~]]] ~[[%text 'right bar']])
+                ==
+            ==
+      %+  expect-eq
+        !>  %-  trip
+          '''
+          | Left columns          | Right columns |
+          | :-------------------- | ------------: |
+          | left foo              | right foo     |
+          | left [bar](some-link) | right bar     |
+
+          '''
+        !>  %-  table:leaf:en:md
+            :*  %table
+                ~[23 15]
+                ~[~[[%text 'Left columns']] ~[[%text 'Right columns']]]
+                ~[%l %r]
+                :~  :~(~[[%text 'left foo']] ~[[%text 'right foo']])
+                    :~(~[[%text 'left '] [%link ~[[%text 'bar']] [%direct ['some-link' |] ~]]] ~[[%text 'right bar']])
+                ==
+            ==
+    ==
+  ::
   ++  test-paragraph
     ;:  weld
       %+  expect-eq
