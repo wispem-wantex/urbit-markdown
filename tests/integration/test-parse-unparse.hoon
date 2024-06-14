@@ -144,6 +144,33 @@
         This web site is using `markedjs/marked`.
 
         '''
+        ::
+        :: Some new features
+        '''
+        # Task lists!!!!
+
+        This milestone adds support for the Github-flavored markdown extensions, namely:
+
+        - [x] reference links (check [github spec][github])
+        - [x] task list items
+        - [x] tables
+        - [ ] ~~strikethrough formatting~~
+        - [ ] extended autolink
+
+        ---
+
+        ## And tables too
+
+        | *Left* columns            | *Right* columns           | [Centrist] columns        |
+        | ------------------------- | ------------------------: | :-----------------------: |
+        | left foo                  | right foo                 | center foo                |
+        | left barasdfasfdasdf      | right **barasdfasfdasdf** | center barasdfasfdasdf    |
+        | left baz                  | ![](image.png)            | center baz                |
+
+        [github]: https://github.github.com/gfm/#link-reference-definitions
+        [Centrist]: https://en.wikipedia.org/wiki/Centrism
+
+        '''
       ==
     %-  zing  %+  turn  samples
     |=  [sample-doc=@t]
