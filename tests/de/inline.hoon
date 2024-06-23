@@ -111,6 +111,16 @@
         !>((scan "`Some stuff `` with ```tics``` in it`" code:inline:de:md))
     ==
   ::
+  ++  test-html
+    ;:  weld
+      %+  expect-eq
+        =/  the-html  ;a(href "asdf")
+                        ;strike: Some text
+                      ==
+        !>(`html:inline:m`[%html the-html])
+        !>((scan "<a href=\"asdf\"><strike>Some text</strike></a>" html:inline:de:md))
+    ==
+  ::
   ::  Whole paragraphs
   ::  ----------------
   ::
@@ -118,13 +128,15 @@
     ;:  weld
       %+  expect-eq
         !>  ^-  contents:inline:m
-            :~  [%text 'The most complete and widely adopted specification is ']
+            :~  [%text 'The most ']
+                :-  %html  ;strike: complete and
+                [%text ' widely adopted specification is ']
                 [%link ~[[%text 'the Github spec']] [%direct [['https://github.github.com/gfm' |] ~]]]
                 [%text ', which includes several non-standard extensions of the ']
                 [%entity 'middot']
                 [%text ' Markdown format']
             ==
-        !>((scan "The most complete and widely adopted specification is [the Github spec](https://github.github.com/gfm), which includes several non-standard extensions of the &middot; Markdown format" contents:inline:de:md))
+        !>((scan "The most <strike>complete and</strike> widely adopted specification is [the Github spec](https://github.github.com/gfm), which includes several non-standard extensions of the &middot; Markdown format" contents:inline:de:md))
       %+  expect-eq
         !>  ^-  contents:inline:m
             :~  [%escape '&']

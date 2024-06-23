@@ -100,12 +100,16 @@
   ++  test-paragraphs
     ;:  weld
       %+  expect-eq
-        !>  ^-  marl  :~  [[%$ [%$ "The most complete and widely adopted specification is "] ~] ~]
+        !>  ^-  marl  :~  [[%$ [%$ "The most "] ~] ~]
+                          ;strike: complete and
+                          [[%$ [%$ " widely adopted specification is "] ~] ~]
                           ;a(href "https://github.github.com/gfm", title ""): the Github spec
                           [[%$ [%$ ", which includes several non-standard extensions of the Markdown format"] ~] ~]
                       ==
         !>  %-  contents:inline:sail-en:md
-            :~  [%text 'The most complete and widely adopted specification is ']
+            :~  [%text 'The most ']
+                :-  %html  ;strike: complete and
+                [%text ' widely adopted specification is ']
                 [%link ~[[%text 'the Github spec']] [%direct [['https://github.github.com/gfm' |] ~]]]
                 [%text ', which includes several non-standard extensions of the Markdown format']
             ==

@@ -170,6 +170,7 @@
               ++  element                                  :: Any element
                 %+  cook  |=(a=element:inline:m a)
                 ;~  pose
+                  html
                   escape
                   entity
                   strong
@@ -181,6 +182,20 @@
                   text
                   softbrk
                   hardbrk
+                ==
+              ::
+              ++  html
+                %+  stag  %html
+                =,  de-xml:^html                           :: This is a copy-paste of `apex:de-xml:html` except
+                =+  spa=;~(pose comt whit)                 :: it doesn't eat trailing whitespace
+                %+  knee  *manx  |.  ~+
+                ;~  pfix
+                  ;~(plug (more spa decl) (star spa))
+                  ;~  pose
+                    %+  sear  |=([a=marx b=marl c=mane] ?.(=(c n.a) ~ (some [a b])))
+                      ;~(plug head many tail)
+                    empt
+                  ==
                 ==
               ::
               ++  text
@@ -1077,7 +1092,7 @@
                 %-  zing  %+  turn  contents  element
               ++  element
                 |=  [e=element:inline:m]
-                ?+  -.e  !!
+                ?-  -.e
                   %text  (text e)
                   %link  (link e)
                   %escape  (escape e)
@@ -1089,8 +1104,12 @@
                   %line-break  (hardbrk e)
                   %image  (image e)
                   %autolink  (autolink e)
-                  :: ...etc
+                  %html  (html e)
                 ==
+              ++  html
+                |=  [h=html:inline:m]
+                ^-  tape
+                (en-xml:^html manx.h)
               ++  text
                 |=  [t=text:inline:m]
                 ^-  tape
@@ -1472,7 +1491,7 @@
           ++  element
             |=  [e=element:inline:m]
             ^-  manx
-            ?+  -.e  !!
+            ?-  -.e
               %text  (text e)
               %link  (link e)
               %code-span  (code e)
@@ -1484,8 +1503,12 @@
               %line-break  (hardbrk e)
               %image  (image e)
               %autolink  (autolink e)
-              :: ...etc
+              %html  (html e)
             ==
+          ++  html
+            |=  [h=html:inline:m]
+            ^-  manx
+            manx.h
           ++  text
             |=  [t=text:inline:m]
             ^-  manx

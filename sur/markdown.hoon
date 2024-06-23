@@ -90,7 +90,7 @@
       +$  autolink  [%autolink text=@t]
       ::
       ::  HTML
-      +$  html      [%html text=@t]
+      +$  html      [%html =manx]
     --
   ::
   ::  Leaf nodes: non-nested (i.e., terminal) nodes
