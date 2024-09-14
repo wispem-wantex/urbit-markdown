@@ -556,7 +556,7 @@
                             (cold 1 (plus (just '-')))         :: Underlined by '-' means heading lvl 1
                             (cold 2 (plus (just '=')))         :: Underlined by '=' means heading lvl 2
                           ==
-                          (star ace)
+                          ;~(plug (star ace) line-end)
                         ==
                       ==
                     ==
@@ -678,7 +678,8 @@
                   ;~  less
                     heading
                     break
-                    block-quote-line:container                     :: Block quotes can interrupt paragraphs
+                    node:container                     :: Block quotes and lists can interrupt paragraphs
+                    :: TODO: fenced code blocks can interrupt paragraphs
                     %+  cook  snoc  ;~  plug
                       %-  plus  ;~(less line-end prn)  :: Lines must be non-empty
                       line-end
@@ -813,8 +814,8 @@
                       ==
                     ;~  plug
                       line                                 :: First line
-                      %-  star  ;~  pfix                   :: Subsequent lines must have the same indent
-                        (stun [len.mrkr len.mrkr] ace)     :: the indent
+                      %-  star  ;~  pfix
+                        (stun [len.mrkr len.mrkr] ace)     :: Subsequent lines must have the same indent
                         line                               :: the line
                       ==
                     ==

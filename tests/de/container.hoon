@@ -171,6 +171,35 @@
             ~[[%leaf %paragraph ~[[%text 'd'] [%soft-line-break ~]]]]
           ==  ==
         !>((scan "- a\0a  b\0a  \0a- c\0a- d" ul:container:de:md))
+      :: List items can interrupt paragraphs
+      =/  txt
+        '''
+        Item 1
+        - Item 2
+        '''
+      %+  expect-eq
+        !>((rash txt markdown:de:md))
+        !>  ^-  markdown:m  :~
+              ^-  node:markdown:m  [%leaf %paragraph ~[[%text 'Item 1'] [%soft-line-break ~]]]
+              ^-  node:markdown:m  :-  %container  :*  %ul  0  '-'  :~
+                :~  ^-  node:markdown:m  [%leaf [%paragraph contents=~[[%text text='Item 2'] [%soft-line-break ~]]]]
+                ==
+              ==  ==
+            ==
+      :: Nested lists
+      %+  expect-eq
+        !>  ^-  ul:container:m
+          :*  %ul  0  '-'  :~
+            ^-  markdown:m  :~
+              ^-  node:markdown:m  [%leaf [%paragraph contents=~[[%text text='Robin Sloan'] [%soft-line-break ~]]]]
+              ::
+              ^-  node:markdown:m  :-  %container
+              ^-  ul:container:m  :*  %ul  0  '-'  :~
+                ~[[%leaf [%paragraph contents=~[[%text text='~hanfel-dovned'] [%soft-line-break ~]]]]]
+              ==  ==
+            ==
+          ==  ==
+        !>((scan "- Robin Sloan\0a  - ~hanfel-dovned" ul:container:de:md))
     ==
   ::
   ::  Ordered lists

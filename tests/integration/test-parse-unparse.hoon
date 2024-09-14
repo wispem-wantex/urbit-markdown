@@ -171,6 +171,30 @@
         [Centrist]: https://en.wikipedia.org/wiki/Centrism
 
         '''
+        ::
+        :: Problem case
+        '''
+        Something Old:
+
+        - [Robin Sloan, “Specifying Spring '83”](https://www.robinsloan.com/lab/specifying-spring-83/)
+          - See also ~hanfel-dovned/board (app).
+        - [Willis H. Ware, _RAND and the Information Evolution_, Chapter 3, “RAND's First Computer People”](https://www.jstor.org/stable/10.7249/cp537rc.12?seq=6)
+
+        Something New:
+
+        - [zorp-corp/nockapp](https://github.com/zorp-corp/nockapp)
+        - [Ordinal Theory Handbook](https://docs.ordinals.com/)
+
+        Something Borrowed:
+
+        - [Eliran Turgeman, “On over-engineering; finding the right balance”](https://www.16elt.com/2024/09/07/future-proof-code/) (h/t Hacker News)
+
+        Something Blue:
+
+        - [`%wock` Hoon in the Browser `%fund`](https://urbit.iko.soy/apps/fund/project/~racfer-hattes/xwork--hoon-in-the-browser)
+        - [ruth & tim, “Hypnotic Squares”](https://generativeartistry.com/tutorials/hypnotic-squares/)
+
+        '''
       ==
     %-  zing  %+  turn  samples
     |=  [sample-doc=@t]

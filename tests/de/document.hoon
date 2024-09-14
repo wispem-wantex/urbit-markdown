@@ -158,8 +158,8 @@
 
         The successful completion of this project will be a library which includes:
         1. a Markdown data type representation in Hoon
-        2. a parser that can convert a valid Markdown document into this Markdown data structure
-        3. a renderer that can convert Markdown data structures into Sail data structures (i.e., manx and marl), which could then be passed to en-xml:html to render as HTML.
+        1. a parser that can convert a valid Markdown document into this Markdown data structure
+        1. a renderer that can convert Markdown data structures into Sail data structures (i.e., manx and marl), which could then be passed to en-xml:html to render as HTML.
 
         Markdown per se is informally specified; different platforms support slightly different versions. The most complete and widely adopted specification is [the Github spec](https://github.github.com/gfm), which includes several non-standard extensions of the Markdown format, while streamlining / removing the syntax in other areas. Our goal with this project is to support the Github "flavor" of Markdown, because many of these extensions are really popular and have effectively become part of the de facto standard.
 
