@@ -592,8 +592,8 @@
                 %+  cook  |=(a=node:leaf:m a)
                 ;~  pose
                   blank-line
-                  heading
                   break
+                  heading
                   codeblk-indent
                   codeblk-fenced
                   link-ref-def
@@ -611,13 +611,15 @@
                     ;~(pose atx setext)
                 |%
                   ++  atx
-                    =/  atx-eol   ;~  plug
-                                    (star ace)
-                                    (star hax)
-                                    (star ace)
-                                    line-end
+                    =/  atx-eol   ;~  pose
+                                    line-end               :: just end-of-line
+                                    ;~  plug
+                                      (plus ace)
+                                      (star hax)
+                                      (star ace)
+                                      line-end
+                                    ==
                                   ==
-
                     %+  stag  %atx
                     %+  cook                               :: Parse heading inline content
                       |=  [level=@ text=tape]
@@ -661,7 +663,7 @@
                 %+  ifix  :-  (stun [0 3] ace)                  :: Strip indent and trailing space
                               ;~  plug
                                 (star (mask " \09"))
-                                newline                    :: No other chars allowed on the line
+                                line-end                    :: No other chars allowed on the line
                               ==
                   ;~  pose
                     ;~(plug (jest '**') (plus tar))       :: At least 3, but can be more

@@ -42,6 +42,8 @@
   ++  test-thematic-break
     ;:  weld
       %+  expect-eq  !>(`break:leaf:m`[%break '*' 3])  !>((scan "***\0a" break:leaf:de:md))
+      :: Ends with EOF
+      %+  expect-eq  !>(`break:leaf:m`[%break '_' 3])  !>((scan "___" break:leaf:de:md))
       %+  expect-eq  !>(`break:leaf:m`[%break '-' 6])  !>((scan "  ------  \0a" break:leaf:de:md))
       :: Invalid breaks
       %+  expect-eq  !>(~)  !>((rust "  ------a  \0a" break:leaf:de:md))
