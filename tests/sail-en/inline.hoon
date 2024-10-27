@@ -87,6 +87,11 @@
         !>((strong:inline:sail-en:md [%strong '*' ~[[%text 'the Github spec']]]))
     ==
   ::
+  ++  test-inline-strikethru
+    %+  expect-eq
+      !>  ^-  manx  ;strike: oops
+      !>((strikethru:inline:sail-en:md [%strikethru 1 ~[[%text 'oops']]]))
+  ::
   ++  test-inline-code-block
     ;:  weld
       %+  expect-eq

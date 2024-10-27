@@ -92,13 +92,30 @@
       %+  expect-eq
         !>(`strong:inline:m`[%strong '_' ~[[%text 'the Github spec']]])
         !>((scan "__the Github spec__" strong:inline:de:md))
-      :: With nested emphasis
+      :: With nested inlines
       %+  expect-eq
         !>  ^-  strong:inline:m   :+  %strong  '*'  :~  [%text 'the ']
                                                         [%emphasis '*' ~[[%text 'Github']]]
-                                                        [%text ' spec']
+                                                        [%text ' ']
+                                                        [%strikethru 1 ~[[%text 'spec']]]
                                                     ==
-        !>((scan "**the *Github* spec**" strong:inline:de:md))
+        !>((scan "**the *Github* ~spec~**" strong:inline:de:md))
+    ==
+  ::
+  ++  test-inline-strikethru
+    ;:  weld
+      :: One '~'
+      %+  expect-eq
+        !>(`strikethru:inline:m`[%strikethru 1 ~[[%text 'oops']]])
+        !>((scan "~oops~" strikethru:inline:de:md))
+      :: Two '~'
+      %+  expect-eq
+        !>(`strikethru:inline:m`[%strikethru 2 ~[[%text 'oops']]])
+        !>((scan "~~oops~~" strikethru:inline:de:md))
+      :: Two '~' with a single '~' in the body
+      %+  expect-eq
+        !>(`strikethru:inline:m`[%strikethru 2 ~[[%text 'oops~ hehe']]])
+        !>((scan "~~oops~ hehe~~" strikethru:inline:de:md))
     ==
   ::
   ++  test-inline-code-block

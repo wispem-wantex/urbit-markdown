@@ -46,7 +46,7 @@
       ::  A single inline element
       ++  element   $+  inline-element
                     $@  ~
-                    $%(escape entity code hardbrk softbrk text emphasis strong link image autolink html)
+                    $%(escape entity code hardbrk softbrk text emphasis strong strikethru link image autolink html)
       ::
       ::  Any amount of elements
       ++  contents  (list element)
@@ -56,41 +56,43 @@
       ::  -----------------------
       ::
       ::  Backslash-escaped character
-      +$  escape    [%escape char=@t]
+      +$  escape      [%escape char=@t]
       ::
       ::  HTML-entity
-      +$  entity    [%entity code=@t]
+      +$  entity      [%entity code=@t]
       ::
       ::  Code span (inline code).  Interpreted literally, cannot have nested elements.
       ::  Can be enclosed by any amount of backticks on each side, >= 1.  Must be balanced.
-      +$  code      [%code-span num-backticks=@ text=@t]
+      +$  code        [%code-span num-backticks=@ text=@t]
       ::
       ::  Line break
-      +$  hardbrk   [%line-break ~]
+      +$  hardbrk     [%line-break ~]
       ::
       ::  Soft line break: a newline in the source code, will be rendered as a single space
-      +$  softbrk   [%soft-line-break ~]
+      +$  softbrk     [%soft-line-break ~]
       ::
       ::  Text: Just text
-      +$  text      [%text text=@t]
+      +$  text        [%text text=@t]
       ::
       ::  Emphasis and strong emphasis
       ::  Can use either tar "*" or cab "_" as the emphasis character.
       ::  Can have nested inline elements.
-      +$  emphasis  [%emphasis emphasis-char=@t =contents]
-      +$  strong    [%strong emphasis-char=@t =contents]
+      +$  emphasis    [%emphasis emphasis-char=@t =contents]
+      +$  strong      [%strong emphasis-char=@t =contents]
+      :: Likewise, strikethru.  Can be enclosed in either 1 or 2 sigs ('~')
+      +$  strikethru  [%strikethru sig-count=@ =contents]
       ::
       ::  Link
-      +$  link      [%link =contents =target:ln]
+      +$  link        [%link =contents =target:ln]
       ::
       ::  Images
-      +$  image     [%image alt-text=@t =target:ln]
+      +$  image       [%image alt-text=@t =target:ln]
       ::
       ::  Autolink: a link that's just itself, surrounded by "<...>"
-      +$  autolink  [%autolink text=@t]
+      +$  autolink    [%autolink text=@t]
       ::
       ::  HTML
-      +$  html      [%html =manx]
+      +$  html        [%html =manx]
     --
   ::
   ::  Leaf nodes: non-nested (i.e., terminal) nodes

@@ -175,6 +175,7 @@
                   entity
                   strong
                   emphasis
+                  strikethru
                   code
                   link
                   image
@@ -212,6 +213,7 @@
                   autolink
                   emphasis
                   strong
+                  strikethru
                   code
                   softbrk
                   hardbrk
@@ -263,6 +265,7 @@
                       entity
                       emphasis
                       strong
+                      strikethru
                       code
                       image
                       :: Text: =>
@@ -276,6 +279,7 @@
                         entity
                         emphasis
                         strong
+                        strikethru
                         code
                         ser                                   :: No closing ']'
                         prn
@@ -318,6 +322,7 @@
                         escape
                         entity
                         strong
+                        strikethru
                         link
                         autolink
                         code
@@ -334,6 +339,7 @@
                           escape
                           entity
                           strong
+                          strikethru
                           link
                           autolink
                           code
@@ -355,6 +361,7 @@
                         escape
                         entity
                         strong
+                        strikethru
                         link
                         autolink
                         code
@@ -371,6 +378,7 @@
                           escape
                           entity
                           strong
+                          strikethru
                           link
                           autolink
                           code
@@ -391,13 +399,14 @@
                 %+  knee  *strong:inline:m  |.  ~+         :: recurse
                 %+  cook  |=(a=strong:inline:m a)
                 %+  stag  %strong
-                ;~  pose
+                ;~  pose                                   :: Either tars '**' or cabs '__'
                   %+  ifix  [(jest '**') (jest '**')]
                     ;~  plug
-                      (easy '*')
+                      (easy '*')                           :: Note down the emphasis char
                       %-  plus  ;~  pose                   :: Display text can contain various contents
                         escape
                         emphasis
+                        strikethru
                         link
                         autolink
                         code
@@ -413,6 +422,7 @@
                         ;~  less                           :: ...which doesn't match any other inline rule
                           escape
                           emphasis
+                          strikethru
                           link
                           autolink
                           code
@@ -421,16 +431,17 @@
                           softbrk
                           hardbrk
                           :: ...etc
-                          (jest '**')                      :: If a '**', then it's the end of the `emphasis`
+                          (jest '**')                      :: If a '**', then it's the end of the `strong`
                           prn
                         ==
                       ==
                     ==
                   %+  ifix  [(jest '__') (jest '__')]
-                    ;~  plug  (easy '_')
+                    ;~  plug  (easy '_')                   :: Note down the emphasis char
                       %-  plus  ;~  pose                   :: Display text can contain various contents
                         escape
                         emphasis
+                        strikethru
                         link
                         autolink
                         code
@@ -446,6 +457,7 @@
                         ;~  less                           :: ...which doesn't match any other inline rule
                           escape
                           emphasis
+                          strikethru
                           link
                           autolink
                           code
@@ -454,7 +466,86 @@
                           softbrk
                           hardbrk
                           ::
-                          (jest '__')                      :: If a '**', then it's the end of the `emphasis`
+                          (jest '__')                      :: If a '**', then it's the end of the `strong`
+                          prn
+                        ==
+                      ==
+                    ==
+                ==
+              ::
+              ++  strikethru
+                %+  knee  *strikethru:inline:m  |.  ~+         :: recurse
+                %+  cook  |=(a=strikethru:inline:m a)
+                %+  stag  %strikethru
+                ;~  pose                                 :: Either 1 sig '~' or 2 '~~'
+                  %+  ifix  [sig sig]
+                    ;~  plug
+                      (easy 1)                           :: Enclosed in just 1 sig '~'
+                      %-  plus  ;~  pose                   :: Display text can contain various contents
+                        escape
+                        emphasis
+                        strong
+                        link
+                        autolink
+                        code
+                        image
+                        link
+                        softbrk
+                        hardbrk
+                        %+  knee  *text:inline:m  |.  ~+   :: recurse
+                        %+  cook  |=(a=text:inline:m a)
+                        %+  stag  %text
+                        %+  cook  crip
+                        %-  plus                           :: At least one character
+                        ;~  less                           :: ...which doesn't match any other inline rule
+                          escape
+                          emphasis
+                          strong
+                          link
+                          autolink
+                          code
+                          image
+                          link
+                          softbrk
+                          hardbrk
+                          :: ...etc
+                          sig                      :: If a '~', then it's the end of the `strikethru`
+                          prn
+                        ==
+                      ==
+                    ==
+                  %+  ifix  [(jest '~~') (jest '~~')]
+                    ;~  plug
+                      (easy 2)                             :: Enclosed in 2 sigs '~~'
+                      %-  plus  ;~  pose                   :: Display text can contain various contents
+                        escape
+                        emphasis
+                        strong
+                        link
+                        autolink
+                        code
+                        image
+                        link
+                        softbrk
+                        hardbrk
+                        %+  knee  *text:inline:m  |.  ~+   :: recurse
+                        %+  cook  |=(a=text:inline:m a)
+                        %+  stag  %text
+                        %+  cook  crip
+                        %-  plus                           :: At least one character
+                        ;~  less                           :: ...which doesn't match any other inline rule
+                          escape
+                          emphasis
+                          strong
+                          link
+                          autolink
+                          code
+                          image
+                          link
+                          softbrk
+                          hardbrk
+                          :: ...etc
+                          (jest '~~')                      :: If a '~~', then it's the end of the `strikethru`
                           prn
                         ==
                       ==
@@ -1101,6 +1192,7 @@
                   %code-span  (code e)
                   %strong  (strong e)
                   %emphasis  (emphasis e)
+                  %strikethru  (strikethru e)
                   %soft-line-break  (softbrk e)
                   %line-break  (hardbrk e)
                   %image  (image e)
@@ -1184,6 +1276,15 @@
                   (trip emphasis-char.e)
                   (contents contents.e)
                   (trip emphasis-char.e)
+                ==
+              ::
+              ++  strikethru
+                |=  [s=strikethru:inline:m]
+                ^-  tape
+                ;:  weld
+                  (reap sig-count.s '~')
+                  (contents contents.s)
+                  (reap sig-count.s '~')
                 ==
             --
           ::
@@ -1484,6 +1585,17 @@
     ::
     |_  [reference-links=(map @t urlt:ln:m)]
       ++  inline
+        =>  |%
+              ++  get-direct-link  :: DUPE: get-direct-link
+                |=  [=target:ln:m]
+                ^-  urlt:ln:m
+                ?-  -.target
+                  %direct  urlt.target                          :: Direct link; use it
+                  %ref                                          :: Ref link; look it up
+                    ~|  "reflink not found: {<label.target>}"
+                    (~(got by reference-links) label.target)
+                ==
+            --
         |%
           ++  contents
             |=  [=contents:inline:m]
@@ -1500,6 +1612,7 @@
               %entity  (entity e)
               %strong  (strong e)
               %emphasis  (emphasis e)
+              %strikethru  (strikethru e)
               %soft-line-break  (softbrk e)
               %line-break  (hardbrk e)
               %image  (image e)
@@ -1573,6 +1686,12 @@
             |=  [s=strong:inline:m]
             ^-  manx
             ;strong
+              ;*  (contents contents.s)
+            ==
+          ++  strikethru
+            |=  [s=strikethru:inline:m]
+            ^-  manx
+            ;strike
               ;*  (contents contents.s)
             ==
         --

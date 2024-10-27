@@ -83,6 +83,22 @@
       %+  expect-eq
         !>("__the Github spec__")
         !>((strong:inline:en:md [%strong '_' ~[[%text 'the Github spec']]]))
+      :: With nested inlines
+      %+  expect-eq
+        !>("**the *Github* ~spec~**")
+        !>  %-  strong:inline:en:md  :+  %strong  '*'  :~  [%text 'the ']
+                                                        [%emphasis '*' ~[[%text 'Github']]]
+                                                        [%text ' ']
+                                                        [%strikethru 1 ~[[%text 'spec']]]
+                                                    ==
+    ==
+  ::
+  ++  test-inline-strikethru
+    ;:  weld
+      :: One '~'
+      %+  expect-eq  !>("~oops~")  !>((strikethru:inline:en:md [%strikethru 1 ~[[%text 'oops']]]))
+      :: Two '~'
+      %+  expect-eq  !>("~~oops~~")  !>((strikethru:inline:en:md [%strikethru 2 ~[[%text 'oops']]]))
     ==
   ::
   ++  test-inline-code-block
