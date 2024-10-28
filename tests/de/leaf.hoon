@@ -61,6 +61,10 @@
       %+  expect-eq
         !>(`codeblk-indent:leaf:m`[%indent-codeblock 'an indented\0a  codeblock\0a'])
         !>((scan "    an indented\0a      codeblock" codeblk-indent:leaf:de:md))
+      :: Block with blank lines in it
+      %+  expect-eq
+        !>(`codeblk-indent:leaf:m`[%indent-codeblock 'an indented\0a\0a  codeblock\0a'])
+        !>((scan "    an indented\0a\0a      codeblock" codeblk-indent:leaf:de:md))
     ==
   ::
   ++  test-codeblk-fenced

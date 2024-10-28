@@ -217,4 +217,77 @@
             [%leaf %paragraph ~[[%text 'Bar foo'] [%soft-line-break ~]]]
         ==
     ==
+  ::
+  ++  test-4-4-indented-code-blocks
+    ;:  weld
+      :: example 77
+      %+  expect-md
+        '''
+            a simple
+              indented code block
+        '''
+        :~  [%leaf %indent-codeblock 'a simple\0a  indented code block\0a']
+        ==
+      :: example 78
+      %+  expect-md
+        '''
+          - foo
+
+            bar
+        '''
+        :~  :-  %container  :*  %ul  2  '-'
+                              :~  :~  [%leaf %paragraph ~[[%text 'foo'] [%soft-line-break ~]]]
+                                      [%leaf %blank-line ~]
+                                      [%leaf %paragraph ~[[%text 'bar'] [%soft-line-break ~]]]
+                                  ==
+                              ==
+                            ==
+        ==
+      :: example 79
+      %+  expect-md
+        '''
+        1.  foo
+
+            - bar
+        '''
+        :~  :-  %container  :*  %ol  0  '.'  1
+                      :~  :~  [%leaf %paragraph ~[[%text 'foo'] [%soft-line-break ~]]]
+                              [%leaf %blank-line ~]
+                              :-  %container  :*  %ul  0  '-'
+                                :~  :~  [%leaf %paragraph ~[[%text 'bar'] [%soft-line-break ~]]]
+                                    ==
+                                ==
+                              ==
+                          ==
+                      ==
+                    ==
+        ==
+      :: example 80
+      %+  expect-md
+        '''
+            <a/>
+            *hi*
+
+            - one
+        '''
+        :~  [%leaf %indent-codeblock '<a/>\0a*hi*\0a\0a- one\0a']
+        ==
+      :: example 84
+      %+  expect-md
+        '''
+            foo
+        bar
+        '''
+        :~  [%leaf %indent-codeblock 'foo\0a']
+            [%leaf %paragraph ~[[%text 'bar'] [%soft-line-break ~]]]
+        ==
+      :: example 86
+      %+  expect-md
+        '''
+                foo
+            bar
+        '''
+        :~  [%leaf %indent-codeblock '    foo\0abar\0a']
+        ==
+    ==
 --

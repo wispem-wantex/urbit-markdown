@@ -672,17 +672,29 @@
                   ==
               ::
               ++  codeblk-indent
+                =>  |%
+                      ++  indented-chunk                   :: A block of indented code, delimited by newlines
+                        %+  cook  |=(a=(list tape) (zing a))
+                        %-  plus                           :: 1 or more lines
+                        ;~  pfix  (jest '    ')            :: with 4 leading spaces
+                          %+  cook  snoc  ;~  plug
+                            (star ;~(less line-end prn))
+                            line-end
+                          ==
+                        ==
+                    --
                 %+  cook  |=(a=codeblk-indent:leaf:m a)
                 %+  stag  %indent-codeblock
-                %+  cook  |=(a=(list tape) (crip (zing a)))
-                %-  plus                                   :: 1 or more lines
-                  ;~  pfix
-                    (jest '    ')          :: 4 leading spaces
-                    %+  cook  snoc  ;~  plug
-                      (star ;~(less line-end prn))
-                      line-end
-                    ==
+                %+  cook  |=([a=tape b=(list tape)] (crip (welp a (zing b))))
+                ;~  plug                                   :: 1 or more chunks
+                  indented-chunk
+                  %-  star
+                  %+  cook  |=([newlines=tape chunk=tape] `tape`(welp newlines chunk))
+                  ;~  plug
+                    (star newline)                         :: separated by zero or more blank lines
+                    indented-chunk
                   ==
+                ==
               ::
               ++  codeblk-fenced
                 =+  |%
