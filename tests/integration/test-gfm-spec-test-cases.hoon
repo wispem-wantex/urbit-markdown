@@ -1,5 +1,5 @@
 /-  m=markdown
-/+  *test, *markdown
+/+  *test, md=markdown
 ::
 ::=/  expect-parse-to-html                          :: Assert equivalent HTML
 ::  |=  [md=@t html=@t]

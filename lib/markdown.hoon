@@ -62,12 +62,14 @@
             ==
         --
     --
+::
+::  Parse to and from Markdown text format
 |%
-  ::
-  ::  Parse to and from Markdown text format
-  ++  md
-    |%
       ++  de                                               ::  de:md  Deserialize (parse)
+        =<
+            |=  [t=@t]
+            ^-  (unit markdown:m)
+            (rush t markdown)
         |%
           ++  escaped
             |=  [char=@t]
@@ -1585,7 +1587,6 @@
                                       %container  (node:container +.item)
                                     ==
         --
-    --
   ::
   ::  Enserialize as Sail (manx and marl)
   ++  sail-en
@@ -1665,13 +1666,7 @@
           ++  link
             |=  [l=link:inline:m]
             ^-  manx
-            =/  target  target.l
-            =/  urlt  ?-  -.target
-                          %direct  urlt.target                          :: Direct link; use it
-                          %ref                                          :: Ref link; look it up
-                            ~|  "reflink not found: {<label.target>}"
-                            (~(got by reference-links) label.target)
-                      ==
+            =/  =urlt:ln:m  (get-direct-link target.l)
             ;a(href (trip text.url.urlt), title (trip (fall title-text.urlt '')))
               ;*  (contents contents.l)
             ==
@@ -1679,12 +1674,7 @@
             |=  [i=image:inline:m]
             ^-  manx
             =/  target  target.i
-            =/  urlt  ?-  -.target
-                          %direct  urlt.target                          :: Direct link; use it
-                          %ref                                          :: Ref link; look it up
-                            ~|  "reflink not found: {<label.target>}"
-                            (~(got by reference-links) label.target)
-                      ==
+            =/  =urlt:ln:m  (get-direct-link target.i)
             ;img(src (trip text.url.urlt), alt (trip alt-text.i));
           ++  autolink
             |=  [a=autolink:inline:m]

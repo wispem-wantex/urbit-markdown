@@ -1,5 +1,5 @@
 /-  m=markdown
-/+  *test, *markdown
+/+  *test, md=markdown
 ::
 |%
   ++  test-parsing-is-reversible

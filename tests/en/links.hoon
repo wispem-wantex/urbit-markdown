@@ -1,5 +1,5 @@
 /-  m=markdown
-/+  *test, *markdown
+/+  *test, md=markdown
 ::
 ::
 ::  Same test cases  as from `/tests/de`, but in reverse!

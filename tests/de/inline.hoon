@@ -1,5 +1,5 @@
 /-  m=markdown
-/+  *test, *markdown
+/+  *test, md=markdown
 ::
 |%
   ::
@@ -26,10 +26,10 @@
       :: Backfill helper function
       %+  expect-eq
         !>(`link:inline:m`[%link ~[[%text 'asdf']] [%ref %collapsed 'asdf']])
-        !>((backfill-ref-link [%link ~[[%text 'asdf']] [%ref %collapsed '']]))
+        !>((backfill-ref-link:md [%link ~[[%text 'asdf']] [%ref %collapsed '']]))
       %+  expect-eq
         !>(`link:inline:m`[%link ~[[%text 'asdf']] [%ref %shortcut 'asdf']])
-        !>((backfill-ref-link [%link ~[[%text 'asdf']] [%ref %shortcut '']]))
+        !>((backfill-ref-link:md [%link ~[[%text 'asdf']] [%ref %shortcut '']]))
       ::
       :: Direct links
       %+  expect-eq

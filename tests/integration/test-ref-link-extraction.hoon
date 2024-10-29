@@ -1,5 +1,5 @@
 /-  m=markdown
-/+  *test, *markdown
+/+  *test, md=markdown
 ::
 :: Fixtures
 =/  urlt1  [['/url' |] `'title']
@@ -14,18 +14,18 @@
   ++  test-leaf-node
     ;:  weld
       :: Leaf nodes that aren't link-ref-def should be empty
-      %+  expect-eq  !>(~)  !>((process-node:all-link-ref-definitions [%leaf [%heading %atx 1 ~[[%text 'Asdf']]]]))
+      %+  expect-eq  !>(~)  !>((process-node:all-link-ref-definitions:md [%leaf [%heading %atx 1 ~[[%text 'Asdf']]]]))
       :: Link ref defs should produce 1 item
       %+  expect-eq
         !>((make-map ~[['foo' urlt1]]))
-        !>((process-node:all-link-ref-definitions [%leaf [%link-ref-definition 'foo' urlt1]]))
+        !>((process-node:all-link-ref-definitions:md [%leaf [%link-ref-definition 'foo' urlt1]]))
     ==
   ::
   ++  test-block-quotes
     ;:  weld
       %+  expect-eq
         !>((make-map ~[['url1' urlt1] ['url2' urlt2]]))
-        !>  %-  process-node:all-link-ref-definitions
+        !>  %-  process-node:all-link-ref-definitions:md
             :-  %container
             :-  %block-quote
             :~  [%leaf [%heading %atx 1 ~[[%text 'Asdf']]]]
@@ -42,7 +42,7 @@
     ;:  weld
       %+  expect-eq
         !>((make-map ~[['url1' urlt1] ['url2' urlt2] ['url3' urlt3]]))
-        !>  %-  process-node:all-link-ref-definitions
+        !>  %-  process-node:all-link-ref-definitions:md
             :-  %container
             :*  %ul  0  '-'  :~
               ~[[%leaf [%heading %atx 1 ~[[%text 'Asdf']]]]]
@@ -66,7 +66,7 @@
     ;:  weld
       %+  expect-eq
         !>((make-map ~[['foo' urlt1]]))
-        !>  %-  all-link-ref-definitions
+        !>  %-  all-link-ref-definitions:md
             ^-  markdown:m
             :~  [%leaf [%blank-line ~]]
                 [%leaf [%link-ref-definition 'foo' urlt1]]
@@ -137,8 +137,8 @@
       [main]: https://github.com/urbit/urbit/blob/master/MAINTAINERS.md
       '''
     =/  data  (rash a markdown:de:md)
-    =/  aytchtml  (sail-en data)
+    =/  aytchtml  (sail-en:md data)
     %+  expect-eq
       !>(`[['https://github.com/urbit/urbit/tree/master/pkg/arvo' |] ~])
-      !>((~(get by (all-link-ref-definitions data)) 'arvo'))
+      !>((~(get by (all-link-ref-definitions:md data)) 'arvo'))
 --
