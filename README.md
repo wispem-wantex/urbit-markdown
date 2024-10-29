@@ -8,6 +8,8 @@ This library includes:
 - a parser, which converts markdown text to `markdown` objects
 - an HTML renderer, which converts `markdown` objects to HTML
 
+You can finally include `README.md`s and so on in your desks without doing weird directory-structure gymnastics to avoid `|commit`ing them.  Simply take `/mar/md.hoon` from this repo; you can `|commit` your `README.md` into Urbit and it will work!
+
 ## Data structure
 
 `/sur/markdown.hoon` is a core with a `markdown` arm:
