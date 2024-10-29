@@ -61,6 +61,107 @@
                 ==
             ==
         --
+      ::
+      ::  Get a preview-image for a document
+      ++  get-preview-img
+        =<  |=  [doc=markdown:m]
+            ^-  (unit @t)
+            =/  ref-links  (all-link-ref-definitions doc)
+            (~(process-nodes . ref-links) doc)
+        |_  [reference-links=(map @t urlt:ln:m)]
+          ++  get-direct-link      :: DUPE: get-direct-link
+            |=  [=target:ln:m]
+            ^-  urlt:ln:m
+            ?-  -.target
+              %direct  urlt.target                          :: Direct link; use it
+              %ref                                          :: Ref link; look it up
+                ~|  "reflink not found: {<label.target>}"
+                (~(got by reference-links) label.target)
+            ==
+          ++  process-nodes
+            |=  [nodes=markdown:m]
+            ^-  (unit @t)
+            ?~  nodes  ~
+            ?^  a=(process-node (head nodes))  a
+            $(nodes +.nodes)
+          ::
+          ++  process-nodeses
+            |=  [nodeses=(list markdown:m)]
+            ^-  (unit @t)
+            ?~  nodeses  ~
+            ?^  a=(process-nodes (head nodeses))  a
+            $(nodeses +.nodeses)
+          ::
+          ++  process-contents
+            |=  [=contents:inline:m]
+            ^-  (unit @t)
+            ?~  contents  ~
+            ?^  a=(process-inline (head contents))  a
+            $(contents +.contents)
+          ++  process-inline
+            |=  [el=element:inline:m]
+            ^-  (unit @t)
+            ?+  -.el  ~
+              %image  [~ text.url:(get-direct-link target.el)]
+              %emphasis  (process-contents contents.el)
+              %strong  (process-contents contents.el)
+              %strikethru  (process-contents contents.el)
+              %link  (process-contents contents.el)
+            ==
+          ++  process-node
+            |=  [node=node:markdown:m]
+            ^-  (unit @t)
+            ?-  -.node
+              %leaf                                        :: Leaf node: check if it's a link ref def
+                =/  leaf=node:leaf:m  +.node
+                ?+  -.leaf  ~
+                  %heading  (process-contents contents.leaf)
+                  %paragraph  (process-contents contents.leaf)
+                ==
+              ::
+              %container
+                =/  container=node:container:m  +.node
+                ?-  -.container
+                  %block-quote            (process-nodes markdown.container)
+                  %ol                     (process-nodeses contents.container)
+                  %ul                     (process-nodeses contents.container)
+                  %tl                     (process-nodeses (turn contents.container |=([is-checked=? =markdown:m] markdown)))
+                ==
+            ==
+        --
+      ++  get-headers
+        =<  process-doc
+        |%
+          ++  process-doc
+            |=  [doc=markdown:m]
+            ^-  (list [lvl=@ txt=tape])
+            %+  turn
+              (skim doc |=(a=node:markdown:m ?=([%leaf %heading *] a)))
+              |=  [h=node:markdown:m]
+              ?>  ?=([%leaf %heading *] h)
+              ^-  [lvl=@ txt=tape]
+              [level.h (process-contents contents.h)]
+          ++  process-contents
+            |=  [=contents:inline:m]
+            ^-  tape
+            ?~  contents  ~
+            %+  welp  (process-inline (head contents))
+            $(contents +.contents)
+          ++  process-inline
+            |=  [el=element:inline:m]
+            ^-  tape
+            ?+  -.el  ~
+              %text  (trip text.el)
+              %code-span  (trip text.el)
+              %autolink  (trip text.el)
+              %escape  (trip char.el)
+              %entity  `tape`~[code.el]  :: cheat
+              %emphasis  (process-contents contents.el)
+              %strong  (process-contents contents.el)
+              %strikethru  (process-contents contents.el)
+              %link  (process-contents contents.el)
+            ==
+        --
     --
 ::
 ::  Parse to and from Markdown text format

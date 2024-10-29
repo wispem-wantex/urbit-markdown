@@ -1,0 +1,81 @@
+body {
+  margin: 3em 20%;
+}
+
+.index-page {
+  .posts-list {
+    list-style: none;
+
+    a {
+      text-decoration: none;
+    }
+  }
+  .post-preview {
+    display: flex;
+    align-items: center;
+    color: #334;
+    border: 1px solid gray;
+    border-radius: 1em;
+    margin-bottom: 2em;
+    padding: 1em;
+  }
+  .preview__thumbnail {
+    flex: 20em 0 0;
+    max-width: 20em;
+    max-height: 15em;
+  }
+  .preview__description {
+    flex: 20em 1 1;
+    margin-left: 3em;
+  }
+  .preview__title {
+    font-size: 1.3em;
+  }
+}
+
+/** Make it easier to see some formatting stuff **/
+blockquote {
+  border-left: 3px solid gray;
+  padding-left: 1em;
+}
+:not(pre) > code {
+  background-color: #eee;
+  padding: 0.2em 0.3em;
+  border-radius: 0.2em;
+}
+pre {
+  background-color: #eee;
+  display: inline-block;
+  padding: 0.5em 1em;
+  border-radius: 0.3em;
+  border: 1px solid #aaa;
+}
+
+ul.task-list {
+  padding-left: 1em;
+  list-style: none;
+
+  & li > input[type="checkbox"] {
+    float: left;
+    margin: 0.2em 1em;
+  }
+}
+
+table {
+  border-collapse: collapse;
+  /* border: 1px solid #333; */
+  border-radius: 0.3em;
+
+  th, td {
+    border: 1px solid #aaa;
+    padding: 0.5em 1em;
+  }
+}
+
+/** on a post page **/
+ul.headings-list {
+    position: fixed;
+    right: 85%;
+    list-style: none;
+    font-weight: bold;
+}

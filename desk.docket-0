@@ -1,0 +1,9 @@
+:~  title+'Markdown'
+    info+'Edit markdown'
+    color+0x10.0032
+    ::base+'renderer'
+    site+/markdown/renderer
+    version+[0 0 1]
+    website+'https://github.com/wispem-wantex/urbit-markdown'
+    license+'MIT'
+==
