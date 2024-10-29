@@ -1237,6 +1237,7 @@
       ::
       ::  Enserialize (write out as text)
       ++  en
+        =<  markdown
         |%
           ++  escape-chars
             |=  [text=@t chars=(list @t)]
