@@ -110,3 +110,7 @@ The `/lib/markdown.hoon` file is a core with 3 arms: `de`, `en`, and `sail-en`. 
 =/  rendered-html=tape  (en-xml:html unrendered-html)
 rendered-html
 ```
+
+## Demo app
+
+If you install this as a desk, it will create a Markdown tile in Landscape.  That tile links to the `renderer.hoon` app, which provides a demo of how to use this library in a real application.
